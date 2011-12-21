@@ -17,6 +17,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.web.PopupFeatures;
+import javafx.scene.web.WebEngine;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +94,15 @@ public class TabManager {
     private BrowserWindow browser = new BrowserWindow();
     public BrowserTab() {
       super(""); // todo if we don't have some value set in here, we can never set the tab value (jira?)
+
+      // set the new browser to open any pop-up windows in a new tab.
+      browser.getView().getEngine().setCreatePopupHandler(new Callback<PopupFeatures, WebEngine>() {
+        @Override public WebEngine call(PopupFeatures popupFeatures) {
+          final BrowserTab browserTab = new BrowserTab();
+          tabPane.getTabs().add(browserTab);
+          return browserTab.browser.getView().getEngine();
+        }
+      });
       
       // put some dummy invisible content in the tab otherwise it doesn't show because it has no dimensions.  // todo file jira?
       Pane spacer = new StackPane();

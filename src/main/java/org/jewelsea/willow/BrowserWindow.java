@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
@@ -23,9 +22,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.scene.web.*;
+import javafx.scene.web.PromptData;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebEvent;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.*;
@@ -108,21 +109,6 @@ public class BrowserWindow {
     engine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
       @Override public void handle(WebEvent<String> stringWebEvent) {
         getStatus().setValue(stringWebEvent.getData());
-      }
-    });
-
-    engine.setCreatePopupHandler(new Callback<PopupFeatures, WebEngine>() { // todo should create a new tab.
-      @Override public WebEngine call(PopupFeatures popupFeatures) {
-        Stage popupStage = new Stage();
-        final WebView popupWebView = new WebView();
-        final Scene popupScene = new Scene(popupWebView);
-        popupStage.setScene(popupScene);
-        popupStage.setResizable(popupFeatures.isResizable());
-        popupWebView.prefWidthProperty().bind(popupScene.widthProperty());
-        popupWebView.prefHeightProperty().bind(popupScene.heightProperty());
-        popupStage.show();
-
-        return popupWebView.getEngine();
       }
     });
 
