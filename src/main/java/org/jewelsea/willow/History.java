@@ -20,7 +20,7 @@ public class History {
   private         int     pointer = 0;        // index into the history list for the currently displayed page from the history.
   private         Integer navPointer = null;  // index into the history list for a new page to be displayed page in the history.
   private final   BrowserWindow browser;      // browser window (contains WebView) managed by this history.
-  private final   ContextMenu historyMenu = new ContextMenu(); // a menu of history items.
+//  private final   ContextMenu historyMenu = new ContextMenu(); // a menu of history items.
 
   /** create a new history tracker for the given browser window */
   public History(BrowserWindow browser) {
@@ -65,7 +65,7 @@ public class History {
   /** updates the history list to reflect a navigation to the given location. */
   public void executeNav(String newLoc) { // todo add some validation that this is the request nav, so that we ensure all updates occur correctly.
     // don't need to show the history menu anymore.
-    historyMenu.hide();
+//    historyMenu.hide();
 
     if (navPointer == null) { // standard navPointer.
       if (pointer < items.size() - 1) { // wipe any forward button history.
@@ -112,20 +112,19 @@ public class History {
 
   /** @return a new context menu for a range of history items. */
   private ContextMenu createMenu() {
-    // clear the existing history menu as we will build a new one from scratch.
-    historyMenu.getItems().clear();
+    // a menu of history items.
+    final ContextMenu historyMenu = new ContextMenu();
 
     // determine an appropriate subset range of the history list to display.
-    int minIdx = Math.max(0,            pointer - 6); // min range (inclusive) of history items to show.
-    int maxIdx = Math.min(items.size(), pointer + 4); // min range (exclusive) of history items to show.
+    int minIdx = Math.max(0,            pointer - 8); // min range (inclusive) of history items to show.
+    int maxIdx = Math.min(items.size(), pointer + 6); // min range (exclusive) of history items to show.
 
     // add menu items to the history list.
     for (int i = maxIdx - 1; i >= minIdx; i--) {
       final MenuItem nextMenu = createMenuItem(items.get(i), i);
       historyMenu.getItems().add(nextMenu);
       if (i == pointer) {
-//        nextMenu.setStyleClass("-fx-font-weight: bold;");  // todo will need to use style sheets to make this work as if you just set the style, then the control's skin seems to override it . . .
-        nextMenu.getStyleClass().add("currentMenu");         // todo even using style sheets doesn't seem to always work...
+        nextMenu.getStyleClass().add("current-menu");
       }
     }
 
