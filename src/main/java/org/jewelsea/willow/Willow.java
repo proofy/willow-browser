@@ -36,7 +36,7 @@ public class Willow extends Application {
     stage.setTitle("Willow");
 
     // initialize the stuff which can't be initialized in the init method due to stupid threading issues.
-    tabManager = new TabManager();
+    tabManager = new TabManager(chromeLocField);
     sidebar    = SideBar.createSidebar(this);
 
     // initialize the location field in the Chrome.

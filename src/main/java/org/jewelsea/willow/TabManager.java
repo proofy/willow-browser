@@ -8,10 +8,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,27 +18,34 @@ import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.WebEngine;
 import javafx.util.Callback;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /** Manages a set of active browser windows */
 public class TabManager {
   /** representation of the current browser. */
-  private final ReadOnlyObjectWrapper<BrowserWindow> browser = new ReadOnlyObjectWrapper<BrowserWindow>();
+  final private ReadOnlyObjectWrapper<BrowserWindow> browser = new ReadOnlyObjectWrapper<BrowserWindow>();
   public BrowserWindow getBrowser() { return browser.get(); }
   public ReadOnlyObjectProperty<BrowserWindow> browserProperty() { return browser.getReadOnlyProperty(); }
 
-  final TabPane tabPane      = new TabPane();
-  final Button  newTabButton = new Button();
-  
-  final List<BrowserTab> tabs = new ArrayList<BrowserTab>();
+  /** browser tabs. */
+  final private TabPane tabPane      = new TabPane();
+
+  /** button to open a new tab */
+  final private Button  newTabButton = new Button();
+
+  /**
+   * a location field in the chrome representing the location of the current tab
+   * (can be null if the location is not represented in the chrome but only in the browser in the tab itself).
+   */
+  final private TextField chromeLocField;
 
   /** @return the tabs which control the active browser window. */
   public TabPane getTabPane()      { return tabPane; }
   /** @return a button for opening a new tab. */
   public Button  getNewTabButton() { return newTabButton; }
 
-  public TabManager() {
+  public TabManager() { this(null); }
+  public TabManager(TextField locField) {
+    this.chromeLocField = locField;
+
     // create a browser tab pane with a custom tab closing policy which does not allow the last tab to be closed.
     tabPane.setTabMinWidth(50);
     tabPane.setTabMaxWidth(500);
@@ -65,7 +69,7 @@ public class TabManager {
     });
 
     // add the initialTab to the tabset.
-    tabPane.getTabs().add(new BrowserTab());
+    addTab(new BrowserTab());
 
     // create a button for opening a new tab.
     newTabButton.setTooltip(new Tooltip("Tabulate"));
@@ -78,13 +82,19 @@ public class TabManager {
     newTabButton.setGraphic(tabGraphic);
     newTabButton.onActionProperty().set(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent actionEvent) {
-        List<Tab> tabs = tabPane.getTabs();
         final BrowserTab newTab = new BrowserTab();
         newTab.setText("New Tab");
-        tabs.add(newTab);
-        tabPane.getSelectionModel().selectLast();
+        addTab(newTab);
       }
     });
+  }
+
+  private void addTab(BrowserTab tab) {
+    tabPane.getTabs().add(tab);
+    tabPane.getSelectionModel().selectLast();
+    if (chromeLocField != null) {
+      chromeLocField.requestFocus();
+    }
   }
 
   /** Tab associated with a browser window */
@@ -99,7 +109,7 @@ public class TabManager {
       browser.getView().getEngine().setCreatePopupHandler(new Callback<PopupFeatures, WebEngine>() {
         @Override public WebEngine call(PopupFeatures popupFeatures) {
           final BrowserTab browserTab = new BrowserTab();
-          tabPane.getTabs().add(browserTab);
+          addTab(browserTab);
           return browserTab.browser.getView().getEngine();
         }
       });

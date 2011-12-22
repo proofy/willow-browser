@@ -499,5 +499,6 @@ public class BrowserWindow {
 // todo cleanup history code.
 // todo add better favicon support (not just for icos, but for pngs, etc.)
 // todo how to set the save filename.
+// todo file an jira bug request - modifying the list of items in a context menu makes the menus focus model go strange (doesn't appear to...)
 // https://lh3.googleusercontent.com/BylHWQYWZPJtG8OHypz_rfWOEZS9nKh-96uCm-njWlS9vRxPIYOPJ-30XAdDf0U-_cfLz_S3Kg=s128-h128-e365
 // http://www.mozilla.org/images/projects/firebug.png
