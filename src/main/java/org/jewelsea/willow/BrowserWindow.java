@@ -83,7 +83,7 @@ public class BrowserWindow {
       @Override public void changed(ObservableValue<? extends String> observableValue, String oldLoc, String newLoc) {
         getHistory().executeNav(newLoc); // update the history lists.
         getLocField().setText(newLoc);   // update the location field.
-        favicon.set(favIconHandler.fetchFavIcon(newLoc));
+        favicon.set(copyImageView(favIconHandler.fetchFavIcon(newLoc)));
       }
     });
     
@@ -182,6 +182,20 @@ public class BrowserWindow {
         }
       }
     });
+  }
+
+  /** 
+   * Copies an ImageView to a new ImageView, so that we can render multiple copies of the templated
+   * ImageView in a scene.
+   * @param templateImageView an imageview containing an image and other import information to be copied.
+   * @return a copy of the import parts of an ImageView
+   */ 
+  private ImageView copyImageView(ImageView templateImageView) {
+    ImageView xerox = new ImageView();
+    xerox.setFitHeight(templateImageView.getFitHeight());
+    xerox.setPreserveRatio(templateImageView.isPreserveRatio());
+    xerox.imageProperty().bind(templateImageView.imageProperty());
+    return xerox;
   }
 
   private EventHandler<WebEvent<String>> createAlertHandler() {
