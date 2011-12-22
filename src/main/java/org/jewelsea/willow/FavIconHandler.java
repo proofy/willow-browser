@@ -123,6 +123,4 @@ public class FavIconHandler {
   }
 }
 
-// todo double check how pathing logic works for different string types.
-// todo run the fetch async in a worker.
 // todo think about other favicon types such as pngs, and jpgs and how they may be processed as well as favicons which could be specified inside html.
