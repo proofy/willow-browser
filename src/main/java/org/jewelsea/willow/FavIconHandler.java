@@ -105,8 +105,10 @@ public class FavIconHandler {
   }
 
   /**
-   * Determines the root location for the server or null if the browser location does not represent a server
+   * Determines the root location for a server.
    * For example http://www.yahoo.com/games => http://www.yahoo.com
+   * @param browserLoc the location string of a browser window.
+   * @return the computed server root url or null if the browser location does not represent a server.
    */    
   private String findRootLoc(String browserLoc) {
     final int protocolSepLoc = browserLoc.indexOf("://");
