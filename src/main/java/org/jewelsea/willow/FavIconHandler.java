@@ -19,15 +19,22 @@ public class FavIconHandler {
   public  static FavIconHandler  getInstance() { if (instance == null) instance = new FavIconHandler(); return instance; }
   private static FavIconHandler  instance;
 
-  // a threadpool for fetching favicons.
-  private final  ExecutorService threadpool;
-
-  // max number of threads we will use to simultaneously fetch favicons.
+  /** max number of threads we will use to simultaneously fetch favicons. */
   private static final int N_FETCH_THREADS = 4;
 
-  // prefix used for the favicon fetching thread.
+  /** prefix used for the favicon fetching thread. */
   public static final String FAVICON_FETCH_THREAD_PREFIX = "favicon-fetcher-";
 
+  /** a threadpool for fetching favicons. */
+  private final  ExecutorService threadpool;
+
+  /** least recently used cache of favicons */
+  private Map<String, ImageView> faviconCache =
+    new ConcurrentHashMap<String, ImageView>(
+      new LruCache<String, ImageView>(200)
+    );
+
+  /** constructor. */
   public FavIconHandler() {
     // initialize the favicon threadpool to the specified number of threads.
     // the name of the threads are customized so they are easy to recognize.
@@ -43,12 +50,6 @@ public class FavIconHandler {
       }
     });
   }
-
-  /** least recently used cache of favicons */
-  private Map<String, ImageView> faviconCache = 
-    new ConcurrentHashMap<String, ImageView>(
-      new LruCache<String, ImageView>(200)
-    );
 
   /**
    * Fetch a favicon for a given location.
@@ -120,7 +121,6 @@ public class FavIconHandler {
     
     return null;
   }
-
 }
 
 // todo double check how pathing logic works for different string types.
