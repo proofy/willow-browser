@@ -143,10 +143,10 @@ public class SideBar {
     });
 
     // create a slider to manage the fontSize
-    final Slider fontSize = new Slider(0.5, 2.015, 1.0);
+    final Slider fontSize = new Slider(0.75, 1.515, 1.0);
     fontSize.setTooltip(new Tooltip("Make it easier or harder to read"));
-    fontSize.setMajorTickUnit(0.5);
-    fontSize.setMinorTickCount(1);
+    fontSize.setMajorTickUnit(0.25);
+    fontSize.setMinorTickCount(0);
     fontSize.setShowTickMarks(true);
     fontSize.setBlockIncrement(0.1);
     fontSize.valueProperty().addListener(new ChangeListener<Number>() {
