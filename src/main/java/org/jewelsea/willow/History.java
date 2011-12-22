@@ -17,10 +17,9 @@ public class History {
 
   // history items - higher indexed items are later in the history.
   private final ObservableList<String> items = FXCollections.observableArrayList();
-  private         int     pointer = 0;        // index into the history list for the currently displayed page from the history.
-  private         Integer navPointer = null;  // index into the history list for a new page to be displayed page in the history.
-  private final   BrowserWindow browser;      // browser window (contains WebView) managed by this history.
-//  private final   ContextMenu historyMenu = new ContextMenu(); // a menu of history items.
+  private       int     pointer = 0;        // index into the history list for the currently displayed page from the history.
+  private       Integer navPointer = null;  // index into the history list for a new page to be displayed page in the history.
+  private final BrowserWindow browser;      // browser window (contains WebView) managed by this history.
 
   /** create a new history tracker for the given browser window */
   public History(BrowserWindow browser) {
@@ -64,9 +63,6 @@ public class History {
 
   /** updates the history list to reflect a navigation to the given location. */
   public void executeNav(String newLoc) { // todo add some validation that this is the request nav, so that we ensure all updates occur correctly.
-    // don't need to show the history menu anymore.
-//    historyMenu.hide();
-
     if (navPointer == null) { // standard navPointer.
       if (pointer < items.size() - 1) { // wipe any forward button history.
         items.remove(pointer + 1, items.size());
