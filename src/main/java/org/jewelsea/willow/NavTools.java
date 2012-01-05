@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class NavTools {
@@ -131,12 +132,20 @@ public class NavTools {
       }
     });
     
+    final Button fullscreenButton = new Button("Fullscreen");
+    fullscreenButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent actionEvent) {
+        final Stage stage = (Stage) fullscreenButton.getScene().getWindow();
+        stage.setFullScreen(!stage.isFullScreen());
+      }
+    });
+
     // align all of the navigation widgets in a horizontal toolbar.
     final HBox navPane = new HBox();
     navPane.setAlignment(Pos.CENTER);
     navPane.getStyleClass().add("toolbar");
     navPane.setSpacing(5);
-    navPane.getChildren().addAll(sidebarButton, backButton, forwardButton, chrome.getChromeLocField(), chrome.getTabManager().getTabPane(), chrome.getTabManager().getNewTabButton(), navButton);
+    navPane.getChildren().addAll(sidebarButton, backButton, forwardButton, chrome.getChromeLocField(), chrome.getTabManager().getTabPane(), chrome.getTabManager().getNewTabButton(), navButton, fullscreenButton);
     navPane.setFillHeight(false);
     Platform.runLater(new Runnable() {
       @Override public void run() {
