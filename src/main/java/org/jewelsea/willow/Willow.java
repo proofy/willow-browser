@@ -10,8 +10,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -98,6 +97,17 @@ public class Willow extends Application {
             }
           });
         }
+      }
+    });
+
+    // make the chrome location field draggable.
+    chromeLocField.getStyleClass().add("location-field");
+    chromeLocField.setOnDragDetected(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        Dragboard db = chromeLocField.startDragAndDrop(TransferMode.ANY);
+        ClipboardContent content = new ClipboardContent();
+        content.putString(chromeLocField.getText());
+        db.setContent(content);
       }
     });
 
