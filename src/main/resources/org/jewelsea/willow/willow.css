@@ -1,5 +1,7 @@
 .root {
     -fx-background-color: rgba(0,0,0,0.5);
+    -fx-base: antiquewhite;
+    -fx-light-text-color: derive(#292929, 20%);
 }
 .current-menu {
     -fx-font-weight: bold;
@@ -10,7 +12,7 @@
 }
 
 .sidebar-background {
-    -fx-background-color: gainsboro;
+    -fx-background-color: antiquewhite;
 }
 
 .status-background {
@@ -27,7 +29,10 @@
 }
 
 .toolbar {
-    -fx-background-color: linear-gradient(to bottom, gainsboro, silver);
+    /*-fx-background-color: linear-gradient(to bottom, tan, burlywood);*/
+    /*-fx-background-color: linear-gradient(to bottom, seagreen, wheat);*/
+    -fx-background-color: linear-gradient(to bottom, derive(antiquewhite, -5%), derive(antiquewhite, 5%));
+    /*-fx-background-color: linear-gradient(to bottom, derive(linen, -10%), derive(linen, 0%));*/
     /*-fx-background-color: rgba(192, 192, 192, 0);*/
     -fx-padding: 2 5 2 2;
 }
