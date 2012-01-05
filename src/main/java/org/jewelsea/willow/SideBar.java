@@ -21,10 +21,28 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class SideBar {
+  static final String[] defaultBookmarks = {
+    "http://fxexperience.com/",
+    "http://jewelsea.wordpress.com/",
+    "http://docs.oracle.com/javafx/",
+    "http://docs.oracle.com/javafx/2.0/api/index.html",
+    "https://forums.oracle.com/forums/forum.jspa?forumID=1385&start=0"
+  };
+
+  static final String[] canvasBookmarks = {
+    "http://hakim.se/experiments/html5/sketch/#35313167",
+    "http://www.effectgames.com/demos/canvascycle/",
+    "http://andrew-hoyer.com/experiments/cloth/",
+    "http://www.kevs3d.co.uk/dev/lsystems/",
+    "http://www.zynaps.com/site/experiments/environment.html?mesh=bart.wft",
+    "http://mugtug.com/sketchpad/",
+    "http://radikalfx.com/files/collage/demo.html"
+  };
+
   /** Create a private contructor so you can only create a sidebar via factory methods */
   private SideBar(VBox bar, VBox progressHolder) { 
     this.bar            = bar; 
-    this.progressHolder = progressHolder; 
+    this.progressHolder = progressHolder;
   }
   private final VBox bar;
   private final VBox progressHolder;
@@ -45,6 +63,7 @@ public class SideBar {
    * @return the new sidebar.
    */
   public static SideBar createSidebar(final Willow chrome) {
+    // layout holder for the sidebar.
     final VBox bar = new VBox();
     bar.getStyleClass().add("sidebar-background");
 
@@ -125,16 +144,7 @@ public class SideBar {
         if (db.hasString()) {
           // add the dragged url to the bookmarks menu (if it wasn't already there).
           final String bookmarkUrl = db.getString();
-          for (MenuItem item : bookmarksMenu.getItems()) {
-            if (item.getText().equals(bookmarkUrl)) return;
-          }
-          final MenuItem menuItem = new MenuItem(bookmarkUrl);
-          menuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent actionEvent) {
-              chrome.getBrowser().navTo(bookmarkUrl);
-            }
-          });
-          bookmarksMenu.getItems().add(menuItem);
+          if (createBookmark(chrome, bookmarksMenu, bookmarkUrl)) return;
           success = true;
         }
         dragEvent.setDropCompleted(success);
@@ -165,6 +175,20 @@ public class SideBar {
       fontSize
     ).build();
     HBox.setMargin(fontSizeIcon, new Insets(0, 0, 0, 8));
+
+    // create a canvas demos button.
+    final ContextMenu canvasMenu = new ContextMenu();
+    final Button canvasButton = Util.createIconButton(
+      "Canvas Demos",
+      "canvas.jpg",
+      "Things of beauty",
+      null
+    );
+    canvasButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent actionEvent) {
+        canvasMenu.show(canvasButton, Side.BOTTOM, 0, 0);
+      }
+    });
 
     // create a reader button.
     final Button readerButton = Util.createIconButton(
@@ -209,6 +233,15 @@ public class SideBar {
     devPanel.getStyleClass().add("sidebar-panel");
     devPanel.setExpanded(false);
 
+    // create a box for demos.
+    VBox demoBox = new VBox();  // todo generalize this title stuff creation for sidebar items.
+    demoBox.setSpacing(5);
+    demoBox.setStyle("-fx-padding: 5");
+    demoBox.getChildren().addAll(canvasButton);
+    final TitledPane demoPanel = new TitledPane("Demos", demoBox);
+    demoPanel.getStyleClass().add("sidebar-panel");
+    demoPanel.setExpanded(false);
+
     // create a box for benchmark control.
     final TitledPane benchPanel = BenchPanel.createPanel(chrome);
     benchPanel.setExpanded(false);
@@ -218,9 +251,38 @@ public class SideBar {
     devPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
 
     // put the panes inside the sidebar.
-    bar.getChildren().addAll(navPanel, devPanel, benchPanel, spacer);
+    bar.getChildren().addAll(navPanel, devPanel, demoPanel, benchPanel, spacer);
+
+    // create an initial set of bookmarks.
+    for (String url : defaultBookmarks) {
+      createBookmark(chrome, bookmarksMenu, url);
+    }
+    for (String url : canvasBookmarks) {
+      createBookmark(chrome, canvasMenu, url);
+    }
 
     return new SideBar(bar, spacer);
+  }
+
+  /**
+   * Creates a bookmarked url to navigate to.
+   * @param chrome the browser the bookmark is to control.
+   * @param bookmarksMenu the menu into which the bookmark is to be installed.
+   * @param bookmarkUrl the url of the bookmark.  // todo should also include the title.
+   * @return true if the bookmark was installed in the chrome.
+   */
+  private static boolean createBookmark(final Willow chrome, ContextMenu bookmarksMenu, final String bookmarkUrl) {
+    for (MenuItem item : bookmarksMenu.getItems()) {
+      if (item.getText().equals(bookmarkUrl)) return false;
+    }
+    final MenuItem menuItem = new MenuItem(bookmarkUrl);
+    menuItem.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent actionEvent) {
+        chrome.getBrowser().navTo(bookmarkUrl);
+      }
+    });
+    bookmarksMenu.getItems().add(menuItem);
+    return true;
   }
 }
 
