@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -110,6 +111,8 @@ public class Willow extends Application {
         db.setContent(content);
       }
     });
+    
+    stage.getIcons().add(new Image(Util.getResource("WillowTreeIcon.png")));
 
     // set the focus (do it later, so that our request has a better chance
     // of being actioned and the default focus positioning does not override it).
