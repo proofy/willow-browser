@@ -1,19 +1,24 @@
 package org.jewelsea.willow;
 
+import javafx.animation.Animation;
+import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -53,7 +58,8 @@ public class Willow extends Application {
 
     // setup the main layout.
     HBox.setHgrow(chromeLocField, Priority.ALWAYS);
-    mainLayout.setTop(NavTools.createNavPane(this));
+    final Pane navPane = NavTools.createNavPane(this);
+    mainLayout.setTop(navPane);
     mainLayout.setLeft(getSidebarDisplay());
 
     // add an overlay layer over the main layout for effects and status messages.
@@ -111,7 +117,32 @@ public class Willow extends Application {
         db.setContent(content);
       }
     });
-    
+
+    // automatically hide and show the sidebar and navbar as we transition in and out of fullscreen.
+    final Button navPaneButton = createNavPaneButton(navPane);
+    stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
+      @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+        if (( stage.isFullScreen() &&  getSidebarDisplay().isVisible()) ||
+            (!stage.isFullScreen() && !getSidebarDisplay().isVisible())) {
+          ((Button) scene.lookup("#sidebarButton")).fire();
+        }
+        if (( stage.isFullScreen() &&  navPane.isVisible()) ||
+            (!stage.isFullScreen() && !navPane.isVisible())) {
+          navPaneButton.fire();
+        }
+      }
+    });
+
+    // create a new tab when the user presses Ctrl+T
+    scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+      @Override public void handle(KeyEvent keyEvent) {
+        if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.T)) {
+          tabManager.getNewTabButton().fire();
+        }
+      }
+    });
+
+    // add an icon for the application.
     stage.getIcons().add(new Image(Util.getResource("WillowTreeIcon.png")));
 
     // set the focus (do it later, so that our request has a better chance
@@ -128,6 +159,50 @@ public class Willow extends Application {
 //        Util.dump(scene.getRoot());
 //      }
 //    });
+  }
+
+  // creates a button to hide and show the navigation pane.
+  private Button createNavPaneButton(final Pane navPane) {
+    final Button navPaneButton = new Button();
+    navPaneButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent actionEvent) {
+        // hide sidebar.
+        final double startHeight = navPane.getHeight();
+        final Animation hideNavPane = new Transition() {
+          { setCycleDuration(Duration.millis(250)); }
+          protected void interpolate(double frac) {
+            final double curHeight = startHeight * (1.0 - frac);
+            navPane.setPrefHeight(curHeight);
+            navPane.setTranslateY(-startHeight + curHeight);
+          }
+        };
+        hideNavPane.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+          @Override public void handle(ActionEvent actionEvent) {
+            navPane.setVisible(false);
+          }
+        });
+
+        // show sidebar.
+        final Animation showNavPane = new Transition() {
+          { setCycleDuration(Duration.millis(250)); }
+          protected void interpolate(double frac) {
+            navPane.setVisible(true);
+            final double curHeight = startHeight * frac;
+            navPane.setPrefHeight(curHeight);
+            navPane.setTranslateY(-startHeight + curHeight);
+          }
+        };
+
+        if (showNavPane.statusProperty().get().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().get().equals(Animation.Status.STOPPED)) {
+          if (navPane.isVisible()) {
+            hideNavPane.play();
+          } else {
+            showNavPane.play();
+          }
+        }
+      }
+    });
+    return navPaneButton;
   }
 
   /**

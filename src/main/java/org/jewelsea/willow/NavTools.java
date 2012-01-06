@@ -82,6 +82,7 @@ public class NavTools {
 
     // create a button to hide and show the sidebar.
     final Button sidebarButton = new Button();
+    sidebarButton.setId("sidebarButton");
     final ImageView sidebarGraphic = new ImageView(new Image(Util.getResource("Down Arrow.png")));
     final ColorAdjust colorAdjust = new ColorAdjust();
     colorAdjust.setContrast(-0.7);
@@ -132,7 +133,13 @@ public class NavTools {
       }
     });
     
-    final Button fullscreenButton = new Button("Fullscreen");
+    final Button fullscreenButton = new Button();
+    fullscreenButton.setTooltip(new Tooltip("Go huge"));
+    final ImageView fullscreenGraphic = new ImageView(new Image(Util.getResource("1325834738_gtk-fullscreen.png")));
+    fullscreenGraphic.setEffect(colorAdjust);
+    fullscreenGraphic.setPreserveRatio(true);
+    fullscreenGraphic.setFitHeight(16);
+    fullscreenButton.setGraphic(fullscreenGraphic);
     fullscreenButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent actionEvent) {
         final Stage stage = (Stage) fullscreenButton.getScene().getWindow();
@@ -163,3 +170,4 @@ public class NavTools {
 
 // todo while a page is loading we might want to switch the favicon to a loading animation...
 // todo may also want to add the following ot the navbar... /* createLoadIndicator(), */ /* browser.favicon, */
+// todo add ability to save pdfs and other docs.
