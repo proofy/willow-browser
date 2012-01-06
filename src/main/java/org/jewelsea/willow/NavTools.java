@@ -138,7 +138,7 @@ public class NavTools {
     final ImageView fullscreenGraphic = new ImageView(new Image(Util.getResource("1325834738_gtk-fullscreen.png")));
     fullscreenGraphic.setEffect(colorAdjust);
     fullscreenGraphic.setPreserveRatio(true);
-    fullscreenGraphic.setFitHeight(16);
+    fullscreenGraphic.setFitHeight(14);
     fullscreenButton.setGraphic(fullscreenGraphic);
     fullscreenButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent actionEvent) {
