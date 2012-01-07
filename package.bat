@@ -1,5 +1,4 @@
-rem Windows build script.
-rem Currently only builds the standalone app jar as the signing function doesn't work for javafxpackager (http://javafx-jira.kenai.com/browse/RT-18246)
+rem Windows build script (note signing function requires JavaFX SDK 2.1b7 or later)
 
 rem cleanup the output directories
 rd /S /Q out
@@ -23,10 +22,8 @@ rem copy the lib files to the distribution
 mkdir dist\lib
 xcopy /S lib dist\lib
 
-rem package the app as a webstart app and applet
-rem "%JAVAFX_SDK_HOME%\bin\javafxpackager" -deploy -outdir dist-web -outfile Willow -width 1121 -height 600 -name Willow -appclass org.jewelsea.willow.Willow.class -v -srcdir dist -srcfiles Willow.jar;lib\image4j.jar;lib\PDFRenderer-0.9.1.jar -v
-
 rem sign the app
-rem "%JAVAFX_SDK_HOME%\bin\javafxpackager" -signjar -outdir dist-signed -keyStore willow.jks -storePass willow -alias willow -keypass willow -srcdir dist
+"%JAVAFX_SDK_HOME%\bin\javafxpackager" -signjar -outdir dist-signed -keyStore willow.jks -storePass willow -alias willow -keypass willow -srcdir dist
 
-
+rem package the app as a webstart app and applet
+"%JAVAFX_SDK_HOME%\bin\javafxpackager" -deploy -outdir dist-web -outfile Willow -width 1121 -height 600 -name Willow -appclass org.jewelsea.willow.Willow.class -v -srcdir dist-signed -srcfiles Willow.jar;lib\image4j.jar;lib\PDFRenderer-0.9.1.jar -v
