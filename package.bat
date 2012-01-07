@@ -15,6 +15,12 @@ rem compile the source
 rem copy the resources to the output
 xcopy /S src\main\resources\* out\*
 
+rem delete the unnecessary css source file from the output directory.
+del out\org\jewelsea\willow\willow.css
+
+rem convert the css to a binary format
+"%JAVAFX_SDK_HOME%\bin\javafxpackager" -createbss -srcdir src\main\resources\org\jewelsea\willow -srcfiles willow.css -outdir out\org\jewelsea\willow -outfile willow -v
+
 rem package the app as a click to run jar
 "%JAVAFX_SDK_HOME%\bin\javafxpackager" -createjar -appclass org.jewelsea.willow.Willow -srcdir out -classpath lib\image4j.jar;lib\PDFRenderer-0.9.1.jar -outdir dist -runtimeversion 2.0 -outfile willow.jar -v
 
