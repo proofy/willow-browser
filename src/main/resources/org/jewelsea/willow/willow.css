@@ -12,7 +12,7 @@
 }
 
 .sidebar-background {
-    -fx-background-color: antiquewhite;
+    -fx-background-color: linear-gradient(to bottom, derive(antiquewhite, -10%), derive(antiquewhite, 10%));
 }
 
 .status-background {
