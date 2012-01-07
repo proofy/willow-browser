@@ -1,0 +1,1 @@
+keytool -genkey -alias willow -keystore willow.jks < signingdata.txt
