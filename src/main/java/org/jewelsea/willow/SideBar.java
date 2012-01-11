@@ -30,11 +30,12 @@ public class SideBar {
   };
 
   static final String[] canvasBookmarks = {
+    "http://www.zynaps.com/site/experiments/environment.html?mesh=bart.wft",
     "http://hakim.se/experiments/html5/sketch/#35313167",
     "http://www.effectgames.com/demos/canvascycle/",
     "http://andrew-hoyer.com/experiments/cloth/",
     "http://www.kevs3d.co.uk/dev/lsystems/",
-    "http://www.zynaps.com/site/experiments/environment.html?mesh=bart.wft",
+    "http://www.openrise.com/lab/FlowerPower/",
     "http://mugtug.com/sketchpad/",
     "http://radikalfx.com/files/collage/demo.html"
   };
