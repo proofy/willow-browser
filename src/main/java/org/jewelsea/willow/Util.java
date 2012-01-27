@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,6 +33,7 @@ public class Util {
     imageView.setFitHeight(16);
     imageView.setPreserveRatio(true);
     button.setGraphic(imageView);
+    button.setContentDisplay(ContentDisplay.LEFT);
     VBox.setMargin(button, new Insets(0, 5, 0, 5));
     button.setOnAction(actionEventHandler);
 

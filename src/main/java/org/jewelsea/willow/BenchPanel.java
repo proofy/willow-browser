@@ -4,10 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
@@ -52,8 +49,9 @@ public class BenchPanel {
       } else {
         // create a toggle button to navigate to the given benchmark.
         final ToggleButton benchLink = new ToggleButton(link[0]);
-        benchLink.setStyle("-fx-font-size: 14px;");
+        benchLink.getStyleClass().add("icon-button");
         benchLink.setAlignment(Pos.CENTER_LEFT);
+        benchLink.setContentDisplay(ContentDisplay.LEFT);
         benchLink.setOnAction(new EventHandler<ActionEvent>() {
           @Override public void handle(ActionEvent actionEvent) {
             chrome.getBrowser().navTo(link[1]);
