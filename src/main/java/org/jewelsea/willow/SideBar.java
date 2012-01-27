@@ -31,13 +31,13 @@ public class SideBar {
 
   static final String[] canvasBookmarks = {
     "http://www.zynaps.com/site/experiments/environment.html?mesh=bart.wft",
-    "http://hakim.se/experiments/html5/sketch/#35313167",
-    "http://www.effectgames.com/demos/canvascycle/",
     "http://andrew-hoyer.com/experiments/cloth/",
-    "http://www.kevs3d.co.uk/dev/lsystems/",
-    "http://www.openrise.com/lab/FlowerPower/",
-    "http://mugtug.com/sketchpad/",
-    "http://radikalfx.com/files/collage/demo.html"
+    "http://hakim.se/experiments/html5/sketch/#35313167",
+    "http://www.effectgames.com/demos/canvascycle/"
+//    "http://www.kevs3d.co.uk/dev/lsystems/",        rendering of half the fractals here fails, so displayed it.
+//    "http://www.openrise.com/lab/FlowerPower/",     flower power appears to have stopped working in later webview builds, so disabled it.
+//    "http://mugtug.com/sketchpad/",                 sketchpad doesn't work too well, so disabled it.
+//    "http://radikalfx.com/files/collage/demo.html"  collage is pretty boring, so disabled it.
   };
 
   /** Create a private contructor so you can only create a sidebar via factory methods */
