@@ -10,7 +10,10 @@ rem create the compile output directory
 mkdir out
 
 rem compile the source
-"%JDK_HOME%\bin\javac" src\main\java\org\jewelsea\willow\*.java -classpath "%JAVAFX_SDK_HOME%\rt\lib\jfxrt.jar;lib\*" -d out
+"%JDK_HOME%\bin\javac"^
+ src\main\java\org\jewelsea\willow\*.java^
+ -classpath "%JAVAFX_SDK_HOME%\rt\lib\jfxrt.jar;lib\*"^
+ -d out
 
 rem copy the resources to the output
 xcopy /S src\main\resources\* out\*
@@ -19,17 +22,83 @@ rem delete the unnecessary css source file from the output directory.
 del out\org\jewelsea\willow\willow.css
 
 rem convert the css to a binary format
-"%JAVAFX_SDK_HOME%\bin\javafxpackager" -createbss -srcdir src\main\resources\org\jewelsea\willow -srcfiles willow.css -outdir out\org\jewelsea\willow -outfile willow -v
+"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+ -createbss^
+ -srcdir src\main\resources\org\jewelsea\willow^
+ -srcfiles willow.css^
+ -outdir out\org\jewelsea\willow^
+ -outfile willow^
+ -v
 
 rem package the app as a click to run jar
-"%JAVAFX_SDK_HOME%\bin\javafxpackager" -createjar -appclass org.jewelsea.willow.Willow -srcdir out -classpath lib\image4j.jar;lib\PDFRenderer-0.9.1.jar -outdir dist -runtimeversion 2.0 -outfile willow.jar -v
+"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+ -createjar^
+ -appclass org.jewelsea.willow.Willow^
+ -classpath lib\image4j.jar;lib\PDFRenderer-0.9.1.jar^
+ -srcdir out^
+ -outdir dist^
+ -runtimeversion 2.1^
+ -outfile willow.jar^
+ -v
 
 rem copy the lib files to the distribution
 mkdir dist\lib
 xcopy /S lib dist\lib
 
-rem sign the app
+rem use this instead if you want a self signed app
 "%JAVAFX_SDK_HOME%\bin\javafxpackager" -signjar -outdir dist-signed -keyStore keys\willow.jks -storePass willow -alias willow -keypass willow -srcdir dist
 
-rem package the app as a webstart app and applet
-"%JAVAFX_SDK_HOME%\bin\javafxpackager" -deploy -outdir dist-web -outfile Willow -width 1121 -height 600 -name Willow -appclass org.jewelsea.willow.Willow.class -v -srcdir dist-signed -srcfiles Willow.jar;lib\image4j.jar;lib\PDFRenderer-0.9.1.jar -v
+@rem sign the app
+@rem "%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+@rem -signjar^
+@rem -outdir dist-signed^
+@rem -keyStore realkeys\jewelsea.jks^
+@rem -storePass ****^
+@rem -alias jewelsea^
+@rem -keypass ****^
+@rem -srcdir dist^
+@rem -v
+
+rem package the app as a browser embedded app.
+"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+ -deploy^
+ -outdir dist-web^
+ -outfile Willow^
+ -width 100 -height 100^
+ -name "Willow Browser"^
+ -title "Willow Browser"^
+ -vendor "John Smith"^
+ -description "A web browser"^
+ -appclass org.jewelsea.willow.Willow.class^
+ -srcdir dist-signed -srcfiles Willow.jar;lib\image4j.jar;lib\PDFRenderer-0.9.1.jar^
+ -updatemode always^
+ -allpermissions^
+ -embedCertificates^
+ -embedJnlp^
+ -appId Willow^
+ -templateInFilename src\main\assembly\WillowEmbeddedTemplate.html^
+ -templateOutFilename dist-web\WillowEmbedded.html^
+ -argument war^
+ -v
+
+rem package the app as an webstart app
+"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+ -deploy^
+ -outdir dist-web^
+ -outfile Willow^
+ -width 100 -height 100^
+ -name "Willow Browser"^
+ -title "Willow Browser"^
+ -vendor "John Smith"^
+ -description "A web browser"^
+ -appclass org.jewelsea.willow.Willow.class^
+ -srcdir dist-signed -srcfiles Willow.jar;lib\image4j.jar;lib\PDFRenderer-0.9.1.jar^
+ -updatemode always^
+ -allpermissions^
+ -embedCertificates^
+ -embedJnlp^
+ -appId Willow^
+ -templateInFilename src\main\assembly\WillowLauncherTemplate.html^
+ -templateOutFilename dist-web\WillowLauncher.html^
+ -argument war^
+ -v
