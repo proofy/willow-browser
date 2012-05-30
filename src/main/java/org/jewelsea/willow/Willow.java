@@ -1,19 +1,12 @@
 package org.jewelsea.willow;
 
-import javafx.animation.Animation;
-import javafx.animation.Transition;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.beans.value.*;
+import javafx.event.*;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -22,9 +15,8 @@ import javafx.util.Duration;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-
 public class Willow extends Application {
-  public static final String DEFAULT_HOME_LOCATION = "http://docs.oracle.com/javafx/2.0/get_started/jfxpub-get_started.htm";
+  public static final String DEFAULT_HOME_LOCATION = "http://docs.oracle.com/javafx/2/get_started/animation.htm";
   public StringProperty homeLocationProperty = new SimpleStringProperty(DEFAULT_HOME_LOCATION);
   private SideBar    sidebar;                              // sidebar for controlling the app.
   private TabManager tabManager;                           // tab manager for managing browser tabs.
@@ -154,6 +146,8 @@ public class Willow extends Application {
     });
 
     // debugging routine.
+//    System.getProperties().list(System.out);
+//    ScenicView.show(scene);
 //    Platform.runLater(new Runnable() {
 //      @Override public void run() {
 //        Util.dump(scene.getRoot());

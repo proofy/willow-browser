@@ -25,7 +25,7 @@ public class SideBar {
     "http://fxexperience.com/",
     "http://jewelsea.wordpress.com/",
     "http://docs.oracle.com/javafx/",
-    "http://docs.oracle.com/javafx/2.0/api/index.html",
+    "http://docs.oracle.com/javafx/2/api/index.html",
     "https://forums.oracle.com/forums/forum.jspa?forumID=1385&start=0"
   };
 
