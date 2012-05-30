@@ -29,7 +29,7 @@
     <exec.mainClass>org.jewelsea.willow.Willow</exec.mainClass>
     <pdfrenderer.jar>${project.build.directory}/../lib/PDFRenderer-0.9.1.jar</pdfrenderer.jar>
     <javafx.runtime.lib.jar>${env.JAVAFX_SDK_HOME}/rt/lib/jfxrt.jar</javafx.runtime.lib.jar>
-    <javafx.tools.ant.jar>${env.JAVAFX_SDK_HOME}/tools/ant-javafx.jar</javafx.tools.ant.jar>
+    <javafx.tools.ant.jar>${env.JAVAFX_SDK_HOME}/lib/ant-javafx.jar</javafx.tools.ant.jar>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
