@@ -41,7 +41,7 @@ public class Util {
   }
 
   // turn an awt image into a JavaFX image.
-  static javafx.scene.image.Image bufferedImageToFXImage(java.awt.Image image) throws IOException {
+  static javafx.scene.image.Image bufferedImageToFXImage(java.awt.Image image, double width, double height, boolean resize, boolean smooth) throws IOException {
     if (!(image instanceof RenderedImage)) {
       BufferedImage bufferedImage =
         new BufferedImage(
@@ -58,7 +58,7 @@ public class Util {
     ImageIO.write((RenderedImage) image, "png", out);
     out.flush();
     ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-    return new javafx.scene.image.Image(in);
+    return new javafx.scene.image.Image(in, width, height, resize, smooth);
   }
 
   // get a resource relative to the application class.

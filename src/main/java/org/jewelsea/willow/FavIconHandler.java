@@ -64,9 +64,7 @@ public class FavIconHandler {
     
     // ok, it wasn't in the cache, create a placeholder, to be used if the site doesn't have a favicon.
     final ImageView favicon = new ImageView();
-    favicon.setFitHeight(16);
-    favicon.setPreserveRatio(true);
-    
+
     // if the serverRoot of the location cannot be determined, just return the placeholder.
     if (serverRoot == null) return favicon;
     
@@ -84,7 +82,7 @@ public class FavIconHandler {
 
         // if the decoding was successful convert to a JavaFX image and return it.
         if (imgs.size() > 0) {
-          return Util.bufferedImageToFXImage(imgs.get(0));
+          return Util.bufferedImageToFXImage(imgs.get(0), 0, 16, true, true);
         } else {
           return null;
         }
