@@ -114,7 +114,11 @@ public class SideBar {
       "Where did you go?",
       null
     );
-    historyButton.setOnAction(chrome.getBrowser().getHistory().createShowHistoryActionEvent(historyButton));
+    historyButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent actionEvent) {
+        chrome.getBrowser().getHistory().showMenu(historyButton);
+      }
+    });
 
     // create a bookmarksButton.
     final ContextMenu bookmarksMenu = new ContextMenu();

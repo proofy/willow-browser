@@ -1,5 +1,7 @@
 package org.jewelsea.willow;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,15 +23,20 @@ public class History {
   private       Integer navPointer = null;  // index into the history list for a new page to be displayed page in the history.
   private final BrowserWindow browser;      // browser window (contains WebView) managed by this history.
 
+  private ReadOnlyBooleanWrapper canNavForward  = new ReadOnlyBooleanWrapper(false);
+  private ReadOnlyBooleanWrapper canNavBackward = new ReadOnlyBooleanWrapper(false);
+  public ReadOnlyBooleanProperty canNavForwardProperty()  { return canNavForward.getReadOnlyProperty(); }
+  public ReadOnlyBooleanProperty canNavBackwardProperty() { return canNavBackward.getReadOnlyProperty(); }
+
   /** create a new history tracker for the given browser window */
   public History(BrowserWindow browser) {
     this.browser = browser;
   }
 
   /** @return true if the current browser location is not at the end of the history list. */
-  public boolean canNavForward() { return pointer < items.size() - 1; }
+  public boolean canNavForward() { return canNavForwardProperty().get(); }
   /** @return true if the current browser location is not at the beginning of the history list. */
-  public boolean canNavBack()    { return pointer > 0; }
+  public boolean canNavBack()    { return canNavBackwardProperty().get(); }
 
   /**
    * @return the location of the provided history index
@@ -76,6 +83,9 @@ public class History {
       pointer = navPointer;
       navPointer = null;
     }
+
+    canNavForward.set(pointer < items.size() - 1);
+    canNavBackward.set(pointer > 0);
   }
 
   /**
@@ -87,7 +97,7 @@ public class History {
     return new EventHandler<MouseEvent>() {
       @Override public void handle(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-          createMenu().show(displayNode, Side.BOTTOM, 0, 0); // show the history menu below the provided node (back button).
+          showMenu(displayNode);
         }
       }
     };
@@ -101,9 +111,17 @@ public class History {
   public EventHandler<ActionEvent> createShowHistoryActionEvent(final Node displayNode) {
     return new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent actionEvent) {
-        createMenu().show(displayNode, Side.BOTTOM, 0, 0); // show the history menu below the provided node (history button).
+        showMenu(displayNode);
       }
     };
+  }
+
+  /**
+   * show the history menu below the provided node (history button).
+   * @param displayNode the Node below which the menu will be shown.
+   */
+  public void showMenu(Node displayNode) {
+    createMenu().show(displayNode, Side.BOTTOM, 0, 0);
   }
 
   /** @return a new context menu for a range of history items. */

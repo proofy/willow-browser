@@ -12,6 +12,8 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -22,6 +24,7 @@ public class NavTools {
   public static Pane createNavPane(final Willow chrome) {
     // create a back button.
     final Button backButton = new Button();
+    backButton.setId("backButton"); // todo I don't like this id set just for lookup - reference would be better
     backButton.setTooltip(new Tooltip("Go back or right click for history"));
     final ImageView backGraphic = new ImageView(new Image(Util.getResource("239706184.png")));
     final ColorAdjust backColorAdjust = new ColorAdjust();
@@ -39,10 +42,17 @@ public class NavTools {
         }
       }
     });
-    backButton.setOnMouseReleased(chrome.getBrowser().getHistory().createShowHistoryMouseEvent(backButton));
+    backButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+          chrome.getBrowser().getHistory().showMenu(backButton);
+        }
+      }
+    });
 
     // create a forward button.
     final Button forwardButton = new Button();
+    forwardButton.setId("forwardButton"); // todo I don't like this id set just for lookup - reference would be better
     forwardButton.setTranslateX(-2);
     final ImageView forwardGraphic = new ImageView(new Image(Util.getResource("1813406178.png")));
     final ColorAdjust forwardColorAdjust = new ColorAdjust();
@@ -61,7 +71,13 @@ public class NavTools {
         }
       }
     });
-    forwardButton.setOnMouseReleased(chrome.getBrowser().getHistory().createShowHistoryMouseEvent(backButton));
+    forwardButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
+      @Override public void handle(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+          chrome.getBrowser().getHistory().showMenu(backButton);
+        }
+      }
+    });
 
     // create a navigate button.
     final Button navButton = new Button();

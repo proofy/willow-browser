@@ -260,6 +260,18 @@ public class Willow extends Application {
     chromeLocField.textProperty().addListener(chromeLocFieldChangeListener);
     chromeLocField.setText(newBrowser.getLocField().getText());
 
+    // enable forward and backward buttons as appropriate.
+    Button forwardButton = (Button) mainLayout.lookup("#forwardButton");
+    if (forwardButton != null) {
+      forwardButton.disableProperty().unbind();
+      forwardButton.disableProperty().bind(newBrowser.getHistory().canNavForwardProperty().not());
+    }
+    Button backButton = (Button) mainLayout.lookup("#backButton");
+    if (forwardButton != null) {
+      backButton.disableProperty().unbind();
+      backButton.disableProperty().bind(newBrowser.getHistory().canNavBackwardProperty().not());
+    }
+
     // display the selected browser.
     mainLayout.setCenter(newBrowser.getView());
   }
@@ -280,3 +292,5 @@ public class Willow extends Application {
     return tabManager;
   }
 }
+
+// todo tab closing policy is a bit screwy you can't close the last tab when more than one tab is open, whereas you should only not be able to close a tab if there is one and only one tab left.
