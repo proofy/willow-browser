@@ -28,6 +28,7 @@
   <properties>
     <exec.mainClass>org.jewelsea.willow.Willow</exec.mainClass>
     <pdfrenderer.jar>${project.build.directory}/../lib/PDFRenderer-0.9.1.jar</pdfrenderer.jar>
+    <javafx.min.version>2.2</javafx.min.version>
     <javafx.runtime.lib.jar>${env.JAVAFX_SDK_HOME}/rt/lib/jfxrt.jar</javafx.runtime.lib.jar>
     <javafx.tools.ant.jar>${env.JAVAFX_SDK_HOME}/lib/ant-javafx.jar</javafx.tools.ant.jar>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -51,7 +52,7 @@
     <dependency>
       <groupId>javafx</groupId>
       <artifactId>jfxrt</artifactId>
-      <version>2.0</version>
+      <version>${javafx.min.version}</version>
       <scope>system</scope>
       <systemPath>${javafx.runtime.lib.jar}</systemPath>
     </dependency>
@@ -157,7 +158,7 @@
           </descriptors>
           <archive>
             <manifestEntries>
-              <JavaFX-Version>2.0</JavaFX-Version>
+              <JavaFX-Version>${javafx.min.version}</JavaFX-Version>
               <JavaFX-Application-Class>${exec.mainClass}</JavaFX-Application-Class>
               <Main-Class>com/javafx/main/Main</Main-Class>
             </manifestEntries>
