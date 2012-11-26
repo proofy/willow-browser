@@ -6,19 +6,11 @@ send2jsmith@gmail.com
 
 Build Pre-requisites
 --------------------
-JDK 1.7.0_04+
-JavaFX SDK 2.1+
+JDK 1.7.0_09+
 
 
 Build Instructions - Maven
 --------------------------
-Maven build of a browser application => 
-set the environment variable JDK_HOME to the location of your JDK install, for example:
-> set JDK_HOME=C:\Program Files (x86)\Java\jdk1.7.0_06
-
-set the environment variable JAVAFX_SDK_HOME to the location of your JavaFX 2.2 SDK install, for example:
-> set JAVAFX_SDK_HOME=C:\Program Files (x86)\Oracle\JavaFX 2.2 SDK
-
 run a maven build on the project root directory (contains a pom.xml file).
 > mvn package
 
@@ -30,7 +22,7 @@ Build Instructions - Windows Command Line
 -----------------------------------------
 If developing using a command line build =>
 set the environment variable JDK_HOME to the location of your JDK install, for example:
-> set JDK_HOME=C:\Program Files (x86)\Java\jdk1.7.0_06
+> set JDK_HOME=C:\Program Files (x86)\Java\jdk1.7.0_09
 
 set the environment variable JAVAFX_SDK_HOME to the location of your JavaFX SDK install, for example:
 > set JAVAFX_SDK_HOME=C:\Program Files (x86)\Oracle\JavaFX 2.2 SDK
