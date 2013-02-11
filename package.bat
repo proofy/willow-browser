@@ -9,32 +9,37 @@ rd /S /Q dist-signed
 rem create the compile output directory
 mkdir out
 
+set JDK_HOME=C:\Program Files\Java\jdk1.7.0_11
+
 rem compile the source
 "%JDK_HOME%\bin\javac"^
  src\main\java\org\jewelsea\willow\*.java^
- -classpath "%JAVAFX_SDK_HOME%\rt\lib\jfxrt.jar;lib\*"^
+ -classpath "%JDK_HOME%\jre\lib\jfxrt.jar;lib\*"^
  -d out
 
 rem copy the resources to the output
 xcopy /S src\main\resources\* out\*
 
-rem delete the unnecessary css source file from the output directory.
-del out\org\jewelsea\willow\willow.css
+@rem delete the unnecessary css source file from the output directory.
+@rem del out\org\jewelsea\willow\willow.css
 
-rem convert the css to a binary format
-"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
- -createbss^
- -srcdir src\main\resources\org\jewelsea\willow^
- -srcfiles willow.css^
- -outdir out\org\jewelsea\willow^
- -outfile willow^
- -v
+@rem convert the css to a binary format
+@rem commented out as this step is buggy for some JavaFX versions and it adds little value anyway
+@rem "%JDK_HOME%\bin\javafxpackager"^
+@rem -createbss^
+@rem -classpath "%JDK_HOME%\jre\lib\jfxrt.jar"^
+@rem -srcdir src\main\resources\org\jewelsea\willow^
+@rem -srcfiles willow.css^
+@rem -outdir out\org\jewelsea\willow^
+@rem -outfile willow^
+@rem -v
 
 rem package the app as a click to run jar
-"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+"%JDK_HOME%\bin\javafxpackager"^
  -createjar^
  -appclass org.jewelsea.willow.Willow^
  -classpath lib\image4j.jar;lib\PDFRenderer-0.9.1.jar^
+ -nocss2bin^
  -srcdir out^
  -outdir dist^
  -runtimeversion 2.1^
@@ -46,10 +51,10 @@ mkdir dist\lib
 xcopy /S lib dist\lib
 
 rem use this instead if you want a self signed app
-"%JAVAFX_SDK_HOME%\bin\javafxpackager" -signjar -outdir dist-signed -keyStore keys\willow.jks -storePass willow -alias willow -keypass willow -srcdir dist
+"%JDK_HOME%\bin\javafxpackager" -signjar -outdir dist-signed -keyStore keys\willow.jks -storePass willow -alias willow -keypass willow -srcdir dist
 
 @rem sign the app
-@rem "%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+@rem "%JDK_HOME%\bin\javafxpackager"^
 @rem -signjar^
 @rem -outdir dist-signed^
 @rem -keyStore realkeys\jewelsea.jks^
@@ -60,7 +65,7 @@ rem use this instead if you want a self signed app
 @rem -v
 
 rem package the app as a browser embedded app.
-"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+"%JDK_HOME%\bin\javafxpackager"^
  -deploy^
  -outdir dist-web^
  -outfile Willow^
@@ -82,7 +87,7 @@ rem package the app as a browser embedded app.
  -v
 
 rem package the app as an webstart app
-"%JAVAFX_SDK_HOME%\bin\javafxpackager"^
+"%JDK_HOME%\bin\javafxpackager"^
  -deploy^
  -outdir dist-web^
  -outfile Willow^
