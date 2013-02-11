@@ -1,4 +1,4 @@
-rem Windows build script (note signing function requires JavaFX SDK 2.1b7 or later)
+rem Windows build script (requires Java JDK 7u11 or later)
 
 rem cleanup the output directories
 rd /S /Q out
@@ -38,11 +38,11 @@ rem package the app as a click to run jar
 "%JDK_HOME%\bin\javafxpackager"^
  -createjar^
  -appclass org.jewelsea.willow.Willow^
- -classpath lib\image4j.jar;lib\PDFRenderer-0.9.1.jar^
+ -classpath lib/image4j.jar;lib/PDFRenderer-0.9.1.jar^
  -nocss2bin^
  -srcdir out^
  -outdir dist^
- -runtimeversion 2.1^
+ -runtimeversion 2.2^
  -outfile willow.jar^
  -v
 
