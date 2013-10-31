@@ -15,7 +15,7 @@ run a maven build on the project root directory (contains a pom.xml file).
 > mvn package
 
 run the browser
-> %JDK_HOME%\bin\java -jar target\willow-0.1-jar-with-dependencies.jar
+> %JDK_HOME%\bin\java -jar target\willow-0.2-jar-with-dependencies.jar
 
 
 Build Instructions - Windows Command Line
