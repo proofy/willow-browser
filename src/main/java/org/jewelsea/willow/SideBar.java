@@ -16,7 +16,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -179,10 +178,10 @@ public class SideBar {
     ColorAdjust fontSizeColorAdjust = new ColorAdjust();
     fontSizeColorAdjust.setBrightness(0.25);
     fontSizeIcon.setEffect(fontSizeColorAdjust);
-    final HBox fontsizer = HBoxBuilder.create().children(
+    final HBox fontsizer = new HBox(
       fontSizeIcon,
       fontSize
-    ).build();
+    );
     HBox.setMargin(fontSizeIcon, new Insets(0, 0, 0, 8));
 
     // create a canvas demos button.
