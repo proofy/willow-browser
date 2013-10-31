@@ -20,6 +20,9 @@ import javafx.util.Callback;
 
 /** Manages a set of active browser windows */
 public class TabManager {
+
+  final private double TAB_PANE_WIDTH = 400;
+
   /** representation of the current browser. */
   final private ReadOnlyObjectWrapper<BrowserWindow> browser = new ReadOnlyObjectWrapper<BrowserWindow>();
   public BrowserWindow getBrowser() { return browser.get(); }
@@ -48,7 +51,7 @@ public class TabManager {
 
     // create a browser tab pane with a custom tab closing policy which does not allow the last tab to be closed.
     tabPane.setTabMinWidth(50);
-    tabPane.setTabMaxWidth(500);
+    tabPane.setTabMaxWidth(TAB_PANE_WIDTH);
     tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
     tabPane.getTabs().addListener(new ListChangeListener<Tab>() {
       @Override public void onChanged(Change<? extends Tab> change) {
@@ -57,7 +60,7 @@ public class TabManager {
         for (int i = 1; i < tabs.size(); i++) {
           tabs.get(i).setClosable(true);
         }
-        tabPane.setTabMaxWidth(Math.max(50, 500.0 / Math.max(1, tabPane.getTabs().size() * 0.7)));  // todo work out a good max width // todo file jira setting max width on a initialTab pane is buggy as the close symbol is not usable if you change initialTab from closable to not closable. // todo file jira on initialTab pane set policy for closing icon display.
+        tabPane.setTabMaxWidth(Math.max(50, TAB_PANE_WIDTH / Math.max(1, tabPane.getTabs().size() * 0.7)));  // todo work out a good max width // todo file jira setting max width on a initialTab pane is buggy as the close symbol is not usable if you change initialTab from closable to not closable. // todo file jira on initialTab pane set policy for closing icon display.
       }
     });
 
@@ -116,8 +119,8 @@ public class TabManager {
       
       // put some dummy invisible content in the tab otherwise it doesn't show because it has no dimensions.  // todo file jira?
       Pane spacer = new StackPane();
-      spacer.setMinWidth(500);
-      spacer.setMaxWidth(500);  // todo hmm I wonder what the max width really ought to be because this default is not right.
+      spacer.setMinWidth(TAB_PANE_WIDTH + 35);
+      spacer.setMaxWidth(TAB_PANE_WIDTH + 35);
       setContent(spacer);
       
       // add the tab 

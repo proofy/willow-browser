@@ -6,7 +6,7 @@ send2jsmith@gmail.com
 
 Build Pre-requisites
 --------------------
-JDK 1.7.0_11+
+JDK 1.8b113+
 
 
 Build Instructions - Maven
@@ -22,7 +22,7 @@ Build Instructions - Windows Command Line
 -----------------------------------------
 If developing using a command line build =>
 edit package.bat and set the environment variable JDK_HOME to the location of your JDK install, for example:
-> set JDK_HOME=C:\Program Files (x86)\Java\jdk1.7.0_11
+> set JDK_HOME=C:\Program Files (x86)\Java\jdk1.8.0
 
 compile and package the application
 > package.bat

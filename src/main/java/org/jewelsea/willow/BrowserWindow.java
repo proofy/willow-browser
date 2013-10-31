@@ -22,13 +22,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.scene.web.PromptData;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebEvent;
-import javafx.scene.web.WebView;
+import javafx.scene.web.*;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -114,14 +112,19 @@ public class BrowserWindow {
 
     // monitor the location url, and if it is a pdf file, then create a pdf viewer for it.
     getLocField().textProperty().addListener(new ChangeListener<String>() {
-      @Override public void changed(ObservableValue<? extends String> observableValue, String oldLoc, String newLoc) {
+      @Override public void changed(ObservableValue<? extends String> observableValue, String oldLoc, final String newLoc) {
         if (newLoc.endsWith(".pdf")) {
-          try {
-            final PDFViewer pdfViewer = new PDFViewer(false);  // todo try icepdf viewer instead...
-            pdfViewer.openFile(new URL(newLoc));
-          } catch (Exception ex) {
-            // just fail to open a bad pdf url silently - no action required.
-          }
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              try {
+                final PDFViewer pdfViewer = new PDFViewer(false);  // todo try icepdf viewer instead...
+                pdfViewer.openFile(new URL(newLoc));
+              } catch (Exception ex) {
+              // just fail to open a bad pdf url silently - no action required.
+              }
+            }
+          });
         }
         String downloadableExtension = null;  // todo I wonder how to find out from WebView which documents it could not process so that I could trigger a save as for them?
         String[] downloadableExtensions = { ".doc", ".xls", ".zip", ".tgz", ".jar" };
@@ -509,10 +512,6 @@ public class BrowserWindow {
 
 // todo cleanup the javascript prompt handlers as their code could be collapsed.
 // todo log jira issue on browser load work progress not being updated.
-// todo file rfe for icon support.
-// todo cleanup history code.
 // todo add better favicon support (not just for icos, but for pngs, etc.)
 // todo how to set the save filename.
 // todo file an jira bug request - modifying the list of items in a context menu makes the menus focus model go strange (doesn't appear to...)
-// https://lh3.googleusercontent.com/BylHWQYWZPJtG8OHypz_rfWOEZS9nKh-96uCm-njWlS9vRxPIYOPJ-30XAdDf0U-_cfLz_S3Kg=s128-h128-e365
-// http://www.mozilla.org/images/projects/firebug.png

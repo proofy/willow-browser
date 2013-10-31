@@ -161,3 +161,5 @@ public class History {
     return nextMenuItem;
   }
 }
+
+// todo webview now has a built in history, so most of the logic in this class can likely be replaced.

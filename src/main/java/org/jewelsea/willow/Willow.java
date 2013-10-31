@@ -16,6 +16,7 @@ import javafx.util.Duration;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 public class Willow extends Application {
+  public static final String APPLICATION_ICON = "WillowTreeIcon.png";
   public static final String DEFAULT_HOME_LOCATION = "http://docs.oracle.com/javafx/2/get_started/animation.htm";
   public StringProperty homeLocationProperty = new SimpleStringProperty(DEFAULT_HOME_LOCATION);
   private SideBar    sidebar;                              // sidebar for controlling the app.
@@ -52,7 +53,6 @@ public class Willow extends Application {
     HBox.setHgrow(chromeLocField, Priority.ALWAYS);
     final Pane navPane = NavTools.createNavPane(this);
     mainLayout.setTop(navPane);
-    mainLayout.setLeft(getSidebarDisplay());
 
     // add an overlay layer over the main layout for effects and status messages.
     final AnchorPane overlayLayer = new AnchorPane();
@@ -78,6 +78,8 @@ public class Willow extends Application {
     // set some sizing constraints on the scene.
     overlayLayer.prefHeightProperty().bind(scene.heightProperty());
     overlayLayer.prefWidthProperty().bind(scene.widthProperty());
+
+    mainLayout.setLeft(sidebar.getScroll());
 
     // show the scene.
     stage.setScene(scene);
@@ -134,16 +136,12 @@ public class Willow extends Application {
       }
     });
 
-    // add an icon for the application.
-    stage.getIcons().add(new Image(Util.getResource("WillowTreeIcon.png")));
+    getSidebarDisplay().setMaxWidth(getSidebarDisplay().getWidth());
 
-    // set the focus (do it later, so that our request has a better chance
-    // of being actioned and the default focus positioning does not override it).
-    Platform.runLater(new Runnable() {
-      @Override public void run() {
-        getChromeLocField().requestFocus();
-      }
-    });
+    // add an icon for the application.
+    stage.getIcons().add(new Image(Util.getResource(APPLICATION_ICON)));
+
+    sidebar.getScroll().setPrefViewportWidth(sidebar.getBarDisplay().getWidth());
 
     // debugging routine.
 //    System.getProperties().list(System.out);
@@ -158,44 +156,51 @@ public class Willow extends Application {
   // creates a button to hide and show the navigation pane.
   private Button createNavPaneButton(final Pane navPane) {
     final Button navPaneButton = new Button();
-    navPaneButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        // hide sidebar.
-        final double startHeight = navPane.getHeight();
-        final Animation hideNavPane = new Transition() {
+
+      final DoubleProperty startHeight = new SimpleDoubleProperty();
+
+      // todo java 8 has a weird background issue on resize.
+      // hide sidebar.
+      final Animation hideNavPane = new Transition() {
           { setCycleDuration(Duration.millis(250)); }
           protected void interpolate(double frac) {
-            final double curHeight = startHeight * (1.0 - frac);
-            navPane.setPrefHeight(curHeight);
-            navPane.setTranslateY(-startHeight + curHeight);
+              final double curHeight = startHeight.get() * (1.0 - frac);
+              navPane.setPrefHeight(curHeight);   // todo resize a spacing underlay to allow the scene to adjust.
+              navPane.setTranslateY(-startHeight.get() + curHeight);
           }
-        };
-        hideNavPane.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+      };
+      hideNavPane.onFinishedProperty().set(new EventHandler<ActionEvent>() {
           @Override public void handle(ActionEvent actionEvent) {
-            navPane.setVisible(false);
+              navPane.setVisible(false);
           }
-        });
+      });
 
-        // show sidebar.
-        final Animation showNavPane = new Transition() {
+      // show sidebar.
+      final Animation showNavPane = new Transition() {
           { setCycleDuration(Duration.millis(250)); }
           protected void interpolate(double frac) {
-            navPane.setVisible(true);
-            final double curHeight = startHeight * frac;
-            navPane.setPrefHeight(curHeight);
-            navPane.setTranslateY(-startHeight + curHeight);
+              final double curHeight = startHeight.get() * frac;
+              navPane.setPrefHeight(curHeight);
+              navPane.setTranslateY(-startHeight.get() + curHeight);
           }
-        };
+      };
 
-        if (showNavPane.statusProperty().get().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().get().equals(Animation.Status.STOPPED)) {
-          if (navPane.isVisible()) {
-            hideNavPane.play();
-          } else {
-            showNavPane.play();
+      navPaneButton.setOnAction(new EventHandler<ActionEvent>() {
+          @Override public void handle(ActionEvent actionEvent) {
+              navPane.setMinHeight(Control.USE_PREF_SIZE);
+
+              if (showNavPane.statusProperty().get().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().get().equals(Animation.Status.STOPPED)) {
+                  if (navPane.isVisible()) {
+                      startHeight.set(navPane.getHeight());
+                      hideNavPane.play();
+                  } else {
+                      navPane.setVisible(true);
+                      showNavPane.play();
+                  }
+              }
           }
-        }
-      }
-    });
+      });
+
     return navPaneButton;
   }
 
@@ -233,7 +238,7 @@ public class Willow extends Application {
     overlayLayer.getChildren().clear();
     final HBox statusDisplay = newBrowser.createStatusDisplay();
     statusDisplay.translateXProperty().bind(getSidebarDisplay().widthProperty().add(20).add(getSidebarDisplay().translateXProperty()));
-    statusDisplay.translateYProperty().bind(overlayLayer.heightProperty().subtract(30));
+    statusDisplay.translateYProperty().bind(overlayLayer.heightProperty().subtract(50));
     overlayLayer.getChildren().add(statusDisplay);
 
     // monitor the loading progress of the selected browser.
@@ -292,5 +297,3 @@ public class Willow extends Application {
     return tabManager;
   }
 }
-
-// todo tab closing policy is a bit screwy you can't close the last tab when more than one tab is open, whereas you should only not be able to close a tab if there is one and only one tab left.

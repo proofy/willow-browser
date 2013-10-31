@@ -1,4 +1,4 @@
-rem Windows build script (requires Java JDK 7u11 or later)
+rem Windows build script (requires Java JDK 8b113 or later)
 
 rem cleanup the output directories
 rd /S /Q out
@@ -9,7 +9,7 @@ rd /S /Q dist-signed
 rem create the compile output directory
 mkdir out
 
-set JDK_HOME=C:\Program Files\Java\jdk1.7.0_11
+set JDK_HOME=C:\Program Files\Java\jdk1.8.0
 
 rem compile the source
 "%JDK_HOME%\bin\javac"^

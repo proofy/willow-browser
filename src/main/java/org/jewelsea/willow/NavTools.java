@@ -3,10 +3,13 @@ package org.jewelsea.willow;
 import javafx.animation.Animation;
 import javafx.animation.Transition;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.InnerShadow;
@@ -110,45 +113,50 @@ public class NavTools {
     sidebarButton.setGraphic(sidebarGraphic);
     sidebarButton.setTooltip(new Tooltip("Play sidebar hide and seek"));
     sidebarButton.setStyle("-fx-font-weight: bold;");
+    final DoubleProperty startWidth = new SimpleDoubleProperty();
+
+      // todo java 8 has a weird background issue on resize - file bug
+      // hide sidebar.
+      final Animation hideSidebar = new Transition() {
+          { setCycleDuration(Duration.millis(250)); }
+          protected void interpolate(double frac) {
+              final double curWidth = startWidth.get() * (1.0 - frac);
+              chrome.getSidebarDisplay().setPrefWidth(curWidth);   // todo resize a spacing underlay to allow the scene to adjust.
+              chrome.getSidebarDisplay().setTranslateX(-startWidth.get() + curWidth);
+          }
+      };
+      hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+          @Override public void handle(ActionEvent actionEvent) {
+              chrome.getSidebarDisplay().setVisible(false);
+          }
+      });
+
+      // show sidebar.
+      final Animation showSidebar = new Transition() {
+          { setCycleDuration(Duration.millis(250)); }
+          protected void interpolate(double frac) {
+              final double curWidth = startWidth.get() * frac;
+              chrome.getSidebarDisplay().setPrefWidth(curWidth);
+              chrome.getSidebarDisplay().setTranslateX(-startWidth.get() + curWidth);
+          }
+      };
+
     sidebarButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent actionEvent) {
-        // hide sidebar.
-        final double startWidth = chrome.getSidebarDisplay().getWidth();
-        final Animation hideSidebar = new Transition() {
-          { setCycleDuration(Duration.millis(250)); }
-          protected void interpolate(double frac) {
-            final double curWidth = startWidth * (1.0 - frac);
-            chrome.getSidebarDisplay().setPrefWidth(curWidth);
-            chrome.getSidebarDisplay().setTranslateX(-startWidth + curWidth);
-          }
-        };
-        hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-          @Override public void handle(ActionEvent actionEvent) {
-            chrome.getSidebarDisplay().setVisible(false);
-          }
-        });
-
-        // show sidebar.
-        final Animation showSidebar = new Transition() {
-          { setCycleDuration(Duration.millis(250)); }
-          protected void interpolate(double frac) {
-            chrome.getSidebarDisplay().setVisible(true);
-            final double curWidth = startWidth * frac;
-            chrome.getSidebarDisplay().setPrefWidth(curWidth);
-            chrome.getSidebarDisplay().setTranslateX(-startWidth + curWidth);
-          }
-        };
+        chrome.getSidebarDisplay().setMinWidth(Control.USE_PREF_SIZE);
 
         if (showSidebar.statusProperty().get().equals(Animation.Status.STOPPED) && hideSidebar.statusProperty().get().equals(Animation.Status.STOPPED)) {
           if (chrome.getSidebarDisplay().isVisible()) {
+            startWidth.set(chrome.getSidebarDisplay().getWidth());
             hideSidebar.play();
           } else {
+            chrome.getSidebarDisplay().setVisible(true);
             showSidebar.play();
           }
         }
       }
     });
-    
+
     final Button fullscreenButton = new Button();
     fullscreenButton.setTooltip(new Tooltip("Go huge"));
     final ImageView fullscreenGraphic = new ImageView(new Image(Util.getResource("1325834738_gtk-fullscreen.png")));
@@ -179,7 +187,7 @@ public class NavTools {
     final InnerShadow innerShadow = new InnerShadow();
     innerShadow.setColor(Color.ANTIQUEWHITE);
     navPane.setEffect(innerShadow);
-    
+
     return navPane;
   }
 }

@@ -39,11 +39,15 @@ public class SideBar {
 //    "http://mugtug.com/sketchpad/",                 sketchpad doesn't work too well, so disabled it.
 //    "http://radikalfx.com/files/collage/demo.html"  collage is pretty boring, so disabled it.
   };
+    private final ScrollPane sideBarScroll;
 
-  /** Create a private contructor so you can only create a sidebar via factory methods */
-  private SideBar(VBox bar, VBox progressHolder) { 
-    this.bar            = bar; 
+    /** Create a private contructor so you can only create a sidebar via factory methods */
+  private SideBar(final VBox bar, VBox progressHolder) {
+    this.bar            = bar;
     this.progressHolder = progressHolder;
+    this.sideBarScroll  = new ScrollPane(bar);
+    sideBarScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    sideBarScroll.getStyleClass().add("sidebar-scroll");
   }
   private final VBox bar;
   private final VBox progressHolder;
@@ -208,7 +212,7 @@ public class SideBar {
         }
       }
     );
-    
+
     // create a firebug button.
     final Button firebugButton = Util.createIconButton(
       "Firebug",
@@ -220,12 +224,12 @@ public class SideBar {
         }
       }
     );
-    
+
     // create a box for displaying navigation options.
     VBox navigationBox = new VBox();
     navigationBox.setSpacing(5);
     navigationBox.setStyle("-fx-padding: 5");
-    navigationBox.getChildren().addAll(homeButton, historyButton, bookmarksButton, readerButton, fontsizer); // todo fontSize disabled until it is working.
+    navigationBox.getChildren().addAll(homeButton, historyButton, bookmarksButton, readerButton, fontsizer);
     final TitledPane navPanel = new TitledPane("Navigation", navigationBox);
     navPanel.getStyleClass().add("sidebar-panel");
 
@@ -250,7 +254,7 @@ public class SideBar {
     // create a box for benchmark control.
     final TitledPane benchPanel = BenchPanel.createPanel(chrome);
     benchPanel.setExpanded(false);
-    
+
     // size all of the panes similarly.
     navPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
     devPanel.prefWidthProperty().bind(benchPanel.prefWidthProperty());
@@ -289,13 +293,14 @@ public class SideBar {
     bookmarksMenu.getItems().add(menuItem);
     return true;
   }
+
+    public ScrollPane getScroll() {
+        return sideBarScroll;
+    }
 }
 
 // todo add an autohide to the bar if it hasn't been used for a while.
-// todo add a full screen browsing mode.
-// todo fully open sidebar makes the navbar scroll off the top of the screen.
 // todo history in the sidebar should actually be chrome wide rather than browser tab specific.
 // todo some kind of persistence framework is needed.
 
 // todo file jira ability to set the initial offset of a slider
-// todo file jira custom slider formatting does not work.
