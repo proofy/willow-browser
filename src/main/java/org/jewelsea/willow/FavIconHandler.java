@@ -1,7 +1,5 @@
 package org.jewelsea.willow;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,7 +9,10 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /* Helper class for handling favicons for sites */
 public class FavIconHandler {
@@ -31,7 +32,7 @@ public class FavIconHandler {
   /** least recently used cache of favicons */
   private Map<String, ImageView> faviconCache =
     new ConcurrentHashMap<String, ImageView>(
-      new LruCache<String, ImageView>(200)
+      new LruCache<>(200)
     );
 
   /** constructor. */
@@ -90,11 +91,9 @@ public class FavIconHandler {
     };
 
     // replace the placeholder in a favicon whenever the lazy fetch completes.
-    task.valueProperty().addListener(new ChangeListener<Image>() {
-      @Override public void changed(ObservableValue<? extends Image> observableValue, Image oldImage, Image newImage) {
-        if (newImage != null) {
-          favicon.setImage(newImage);
-        }  
+    task.valueProperty().addListener((observableValue, oldImage, newImage) -> {
+      if (newImage != null) {
+        favicon.setImage(newImage);
       }
     });
 

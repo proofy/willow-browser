@@ -5,8 +5,6 @@ import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
@@ -16,7 +14,6 @@ import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -37,19 +34,14 @@ public class NavTools {
     backButton.setGraphic(backGraphic);
     backGraphic.setPreserveRatio(true);
     backGraphic.setFitHeight(32);
-    backButton.onActionProperty().set(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        if (chrome.getBrowser().getHistory().canNavBack()) {
-          chrome.getBrowser().navTo(chrome.getBrowser().getHistory().requestNavBack());
-        }
+    backButton.onActionProperty().set(actionEvent -> {
+      if (chrome.getBrowser().getHistory().canNavBack()) {
+        chrome.getBrowser().navTo(chrome.getBrowser().getHistory().requestNavBack());
       }
     });
-    backButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-          chrome.getBrowser().getHistory().showMenu(backButton);
-        }
+    backButton.setOnMouseReleased(mouseEvent -> {
+      if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+        chrome.getBrowser().getHistory().showMenu(backButton);
       }
     });
 
@@ -66,19 +58,14 @@ public class NavTools {
     forwardGraphic.setFitHeight(20);
     forwardButton.setGraphic(forwardGraphic);
     forwardButton.setTooltip(new Tooltip("Go forward"));
-    forwardButton.onActionProperty().set(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        if (chrome.getBrowser().getHistory().canNavForward()) {
-          chrome.getBrowser().navTo(chrome.getBrowser().getHistory().requestNavForward());
-        }
+    forwardButton.onActionProperty().set(actionEvent -> {
+      if (chrome.getBrowser().getHistory().canNavForward()) {
+        chrome.getBrowser().navTo(chrome.getBrowser().getHistory().requestNavForward());
       }
     });
-    forwardButton.setOnMouseReleased(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-          chrome.getBrowser().getHistory().showMenu(backButton);
-        }
+    forwardButton.setOnMouseReleased(mouseEvent -> {
+      if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+        chrome.getBrowser().getHistory().showMenu(backButton);
       }
     });
 
@@ -92,12 +79,9 @@ public class NavTools {
     navGraphic.setPreserveRatio(true);
     navGraphic.setFitHeight(14);
     navButton.setGraphic(navGraphic);
-    navButton.onActionProperty().set(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        chrome.getBrowser().navTo(chrome.getBrowser().getLocField().getText());
-      }
-    });
+    navButton.onActionProperty().set(actionEvent ->
+        chrome.getBrowser().navTo(chrome.getBrowser().getLocField().getText())
+    );
 
     // create a button to hide and show the sidebar.
     final Button sidebarButton = new Button();
@@ -125,11 +109,7 @@ public class NavTools {
               chrome.getSidebarDisplay().setTranslateX(-startWidth.get() + curWidth);
           }
       };
-      hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-          @Override public void handle(ActionEvent actionEvent) {
-              chrome.getSidebarDisplay().setVisible(false);
-          }
-      });
+      hideSidebar.onFinishedProperty().set(actionEvent -> chrome.getSidebarDisplay().setVisible(false));
 
       // show sidebar.
       final Animation showSidebar = new Transition() {
@@ -141,18 +121,16 @@ public class NavTools {
           }
       };
 
-    sidebarButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        chrome.getSidebarDisplay().setMinWidth(Control.USE_PREF_SIZE);
+    sidebarButton.setOnAction(actionEvent -> {
+      chrome.getSidebarDisplay().setMinWidth(Control.USE_PREF_SIZE);
 
-        if (showSidebar.statusProperty().get().equals(Animation.Status.STOPPED) && hideSidebar.statusProperty().get().equals(Animation.Status.STOPPED)) {
-          if (chrome.getSidebarDisplay().isVisible()) {
-            startWidth.set(chrome.getSidebarDisplay().getWidth());
-            hideSidebar.play();
-          } else {
-            chrome.getSidebarDisplay().setVisible(true);
-            showSidebar.play();
-          }
+      if (showSidebar.statusProperty().get().equals(Animation.Status.STOPPED) && hideSidebar.statusProperty().get().equals(Animation.Status.STOPPED)) {
+        if (chrome.getSidebarDisplay().isVisible()) {
+          startWidth.set(chrome.getSidebarDisplay().getWidth());
+          hideSidebar.play();
+        } else {
+          chrome.getSidebarDisplay().setVisible(true);
+          showSidebar.play();
         }
       }
     });
@@ -164,11 +142,9 @@ public class NavTools {
     fullscreenGraphic.setPreserveRatio(true);
     fullscreenGraphic.setFitHeight(14);
     fullscreenButton.setGraphic(fullscreenGraphic);
-    fullscreenButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        final Stage stage = (Stage) fullscreenButton.getScene().getWindow();
-        stage.setFullScreen(!stage.isFullScreen());
-      }
+    fullscreenButton.setOnAction(actionEvent -> {
+      final Stage stage = (Stage) fullscreenButton.getScene().getWindow();
+      stage.setFullScreen(!stage.isFullScreen());
     });
 
     // align all of the navigation widgets in a horizontal toolbar.
@@ -178,11 +154,7 @@ public class NavTools {
     navPane.setSpacing(5);
     navPane.getChildren().addAll(sidebarButton, backButton, forwardButton, chrome.getChromeLocField(), chrome.getTabManager().getTabPane(), chrome.getTabManager().getNewTabButton(), navButton, fullscreenButton);
     navPane.setFillHeight(false);
-    Platform.runLater(new Runnable() {
-      @Override public void run() {
-        navPane.setMinHeight(navPane.getHeight());
-      }
-    });
+    Platform.runLater(() -> navPane.setMinHeight(navPane.getHeight()));
 
     final InnerShadow innerShadow = new InnerShadow();
     innerShadow.setColor(Color.ANTIQUEWHITE);

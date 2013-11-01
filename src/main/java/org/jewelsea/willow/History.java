@@ -94,11 +94,9 @@ public class History {
    * @return a right click mouse button event handler which will show a history context menu.
    */
   public EventHandler<MouseEvent> createShowHistoryMouseEvent(final Node displayNode) {
-    return new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-          showMenu(displayNode);
-        }
+    return mouseEvent -> {
+      if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+        showMenu(displayNode);
       }
     };
   }
@@ -109,11 +107,7 @@ public class History {
    * @return an action event handler which will show a history context menu.
    */
   public EventHandler<ActionEvent> createShowHistoryActionEvent(final Node displayNode) {
-    return new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        showMenu(displayNode);
-      }
-    };
+    return actionEvent -> showMenu(displayNode);
   }
 
   /**
@@ -153,11 +147,7 @@ public class History {
    */
   private MenuItem createMenuItem(final String loc, final int navPointer) {
     final MenuItem nextMenuItem = new MenuItem(loc);
-    nextMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        browser.navTo(requestNav(navPointer));
-      }
-    });
+    nextMenuItem.setOnAction(actionEvent -> browser.navTo(requestNav(navPointer)));
     return nextMenuItem;
   }
 }

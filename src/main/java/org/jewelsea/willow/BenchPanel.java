@@ -1,7 +1,5 @@
 package org.jewelsea.willow;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -52,11 +50,7 @@ public class BenchPanel {
         benchLink.getStyleClass().add("icon-button");
         benchLink.setAlignment(Pos.CENTER_LEFT);
         benchLink.setContentDisplay(ContentDisplay.LEFT);
-        benchLink.setOnAction(new EventHandler<ActionEvent>() {
-          @Override public void handle(ActionEvent actionEvent) {
-            chrome.getBrowser().navTo(link[1]);
-          }
-        });
+        benchLink.setOnAction(actionEvent -> chrome.getBrowser().navTo(link[1]));
         benchPanel.getChildren().add(benchLink);
         benchLink.setMaxWidth(Double.MAX_VALUE);
         VBox.setMargin(benchLink, new Insets(0, 5, 0, 5));

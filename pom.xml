@@ -32,8 +32,8 @@
         <jdk.home>/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home</jdk.home>
         <javafx.runtime.lib.jar>${jdk.home}/jre/lib/ext/jfxrt.jar</javafx.runtime.lib.jar>
         <javafx.tools.ant.jar>${jdk.home}/lib/ant-javafx.jar</javafx.tools.ant.jar>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

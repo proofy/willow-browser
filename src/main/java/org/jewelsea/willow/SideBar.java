@@ -88,26 +88,22 @@ public class SideBar {
         }
       }
     );
-    homeButton.setOnDragOver(new EventHandler<DragEvent>() {
-      @Override public void handle(DragEvent event) {
-        Dragboard db = event.getDragboard();
-        if (db.hasString()) {
-          event.acceptTransferModes(TransferMode.COPY);
-        }
-        event.consume();
+    homeButton.setOnDragOver(event -> {
+      Dragboard db = event.getDragboard();
+      if (db.hasString()) {
+        event.acceptTransferModes(TransferMode.COPY);
       }
+      event.consume();
     });
-    homeButton.setOnDragDropped(new EventHandler<DragEvent>() {
-      @Override public void handle(DragEvent dragEvent) {
-        Dragboard db = dragEvent.getDragboard();
-        boolean success = false;
-        if (db.hasString()) {
-          chrome.homeLocationProperty.set(db.getString());
-          success = true;
-        }
-        dragEvent.setDropCompleted(success);
-        dragEvent.consume();
+    homeButton.setOnDragDropped(dragEvent -> {
+      Dragboard db = dragEvent.getDragboard();
+      boolean success = false;
+      if (db.hasString()) {
+        chrome.homeLocationProperty.set(db.getString());
+        success = true;
       }
+      dragEvent.setDropCompleted(success);
+      dragEvent.consume();
     });
 
     // create a history button to show the history.
@@ -117,11 +113,9 @@ public class SideBar {
       "Where did you go?",
       null
     );
-    historyButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        chrome.getBrowser().getHistory().showMenu(historyButton);
-      }
-    });
+    historyButton.setOnAction(e ->
+            chrome.getBrowser().getHistory().showMenu(historyButton)
+    );
 
     // create a bookmarksButton.
     final ContextMenu bookmarksMenu = new ContextMenu();
@@ -284,11 +278,7 @@ public class SideBar {
       if (item.getText().equals(bookmarkUrl)) return false;
     }
     final MenuItem menuItem = new MenuItem(bookmarkUrl);
-    menuItem.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent actionEvent) {
-        chrome.getBrowser().navTo(bookmarkUrl);
-      }
-    });
+    menuItem.setOnAction(actionEvent -> chrome.getBrowser().navTo(bookmarkUrl));
     bookmarksMenu.getItems().add(menuItem);
     return true;
   }

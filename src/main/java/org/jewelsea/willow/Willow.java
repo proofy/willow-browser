@@ -1,20 +1,31 @@
 package org.jewelsea.willow;
 
-import javafx.animation.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.beans.value.*;
-import javafx.event.*;
+import javafx.animation.Animation;
+import javafx.animation.Transition;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Control;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+
 public class Willow extends Application {
   public static final String APPLICATION_ICON = "WillowTreeIcon.png";
   public static final String DEFAULT_HOME_LOCATION = "http://docs.oracle.com/javafx/2/get_started/animation.htm";
@@ -41,11 +52,9 @@ public class Willow extends Application {
     chromeLocField.setStyle("-fx-font-size: 14;");
     chromeLocField.setPromptText("Where do you want to go today?");
     chromeLocField.setTooltip(new Tooltip("Enter a location or find happiness."));
-    chromeLocField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-      @Override public void handle(KeyEvent keyEvent) {
-        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-          getBrowser().navTo(chromeLocField.getText());
-        }
+    chromeLocField.setOnKeyReleased(keyEvent -> {
+      if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+        getBrowser().navTo(chromeLocField.getText());
       }
     });
 
@@ -61,11 +70,9 @@ public class Willow extends Application {
     overlayLayer.setPickOnBounds(false);
 
     // monitor the tab manager for a change in the browser window and update the display appropriately.
-    tabManager.browserProperty().addListener(new ChangeListener<BrowserWindow>() {
-      @Override public void changed(ObservableValue<? extends BrowserWindow> observableValue, final BrowserWindow oldBrowser, final BrowserWindow newBrowser) {
-        browserChanged(oldBrowser, newBrowser, stage, overlayLayer);
-      }
-    });
+    tabManager.browserProperty().addListener((observableValue, oldBrowser, newBrowser) ->
+      browserChanged(oldBrowser, newBrowser, stage, overlayLayer)
+    );
 
     // we need to manually handle the change from no browser at all to an initial browser.
     browserChanged(null, getBrowser(), stage, overlayLayer);
@@ -89,50 +96,39 @@ public class Willow extends Application {
     getBrowser().navTo(homeLocationProperty.get());
 
     // highlight the entire text if we click on the chromeLocField so that it can be easily changed.
-    chromeLocField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean from, Boolean to) {
-        if (to) {
-          Platform.runLater(new Runnable() { // run later used here to override the default selection rules for the textfield.
-            @Override public void run() {
-              chromeLocField.selectAll();
-            }
-          });
-        }
+    chromeLocField.focusedProperty().addListener((observableValue, from, to) -> {
+      if (to) {
+        // run later used here to override the default selection rules for the textfield.
+        Platform.runLater(chromeLocField::selectAll);
       }
     });
 
     // make the chrome location field draggable.
     chromeLocField.getStyleClass().add("location-field");
-    chromeLocField.setOnDragDetected(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent mouseEvent) {
-        Dragboard db = chromeLocField.startDragAndDrop(TransferMode.ANY);
-        ClipboardContent content = new ClipboardContent();
-        content.putString(chromeLocField.getText());
-        db.setContent(content);
-      }
+    chromeLocField.setOnDragDetected(mouseEvent -> {
+      Dragboard db = chromeLocField.startDragAndDrop(TransferMode.ANY);
+      ClipboardContent content = new ClipboardContent();
+      content.putString(chromeLocField.getText());
+      db.setContent(content);
     });
 
     // automatically hide and show the sidebar and navbar as we transition in and out of fullscreen.
     final Button navPaneButton = createNavPaneButton(navPane);
-    stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
-      @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-        if (( stage.isFullScreen() &&  getSidebarDisplay().isVisible()) ||
-            (!stage.isFullScreen() && !getSidebarDisplay().isVisible())) {
-          ((Button) scene.lookup("#sidebarButton")).fire();
-        }
-        if (( stage.isFullScreen() &&  navPane.isVisible()) ||
-            (!stage.isFullScreen() && !navPane.isVisible())) {
-          navPaneButton.fire();
-        }
+    stage.fullScreenProperty().addListener((observableValue, oldValue, newValue) -> {
+      if (( stage.isFullScreen() &&  getSidebarDisplay().isVisible()) ||
+          (!stage.isFullScreen() && !getSidebarDisplay().isVisible())) {
+        ((Button) scene.lookup("#sidebarButton")).fire();
+      }
+      if (( stage.isFullScreen() &&  navPane.isVisible()) ||
+          (!stage.isFullScreen() && !navPane.isVisible())) {
+        navPaneButton.fire();
       }
     });
 
     // create a new tab when the user presses Ctrl+T
-    scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-      @Override public void handle(KeyEvent keyEvent) {
-        if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.T)) {
-          tabManager.getNewTabButton().fire();
-        }
+    scene.setOnKeyPressed(keyEvent -> {
+      if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.T)) {
+        tabManager.getNewTabButton().fire();
       }
     });
 
@@ -169,11 +165,7 @@ public class Willow extends Application {
               navPane.setTranslateY(-startHeight.get() + curHeight);
           }
       };
-      hideNavPane.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-          @Override public void handle(ActionEvent actionEvent) {
-              navPane.setVisible(false);
-          }
-      });
+      hideNavPane.onFinishedProperty().set(actionEvent -> navPane.setVisible(false));
 
       // show sidebar.
       final Animation showNavPane = new Transition() {
@@ -185,18 +177,16 @@ public class Willow extends Application {
           }
       };
 
-      navPaneButton.setOnAction(new EventHandler<ActionEvent>() {
-          @Override public void handle(ActionEvent actionEvent) {
-              navPane.setMinHeight(Control.USE_PREF_SIZE);
+      navPaneButton.setOnAction(actionEvent -> {
+          navPane.setMinHeight(Control.USE_PREF_SIZE);
 
-              if (showNavPane.statusProperty().get().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().get().equals(Animation.Status.STOPPED)) {
-                  if (navPane.isVisible()) {
-                      startHeight.set(navPane.getHeight());
-                      hideNavPane.play();
-                  } else {
-                      navPane.setVisible(true);
-                      showNavPane.play();
-                  }
+          if (showNavPane.statusProperty().get().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().get().equals(Animation.Status.STOPPED)) {
+              if (navPane.isVisible()) {
+                  startHeight.set(navPane.getHeight());
+                  hideNavPane.play();
+              } else {
+                  navPane.setVisible(true);
+                  showNavPane.play();
               }
           }
       });
@@ -221,15 +211,14 @@ public class Willow extends Application {
     }
 
     // update the stage title to monitor the page displayed in the selected browser.
-    newBrowser.getView().getEngine().titleProperty().addListener(new ChangeListener<String>() {  // todo hmm I wonder how the listeners ever get removed...
-      @Override public void changed(ObservableValue<? extends String> observableValue, String oldTitle, String newTitle) {
-        if (newTitle != null && !"".equals(newTitle)) {
-          stage.setTitle("Willow - " + newTitle);
-        } else {
-          // necessary because when the browser is in the process of loading a new page, the title will be empty.  todo I wonder if the title would be reset correctly if the page has no title.
-          if (!newBrowser.getView().getEngine().getLoadWorker().isRunning()) {
-            stage.setTitle("Willow");
-          }
+    // todo hmm I wonder how the listeners ever get removed...
+    newBrowser.getView().getEngine().titleProperty().addListener((observableValue, oldTitle, newTitle) -> {
+      if (newTitle != null && !"".equals(newTitle)) {
+        stage.setTitle("Willow - " + newTitle);
+      } else {
+        // necessary because when the browser is in the process of loading a new page, the title will be empty.  todo I wonder if the title would be reset correctly if the page has no title.
+        if (!newBrowser.getView().getEngine().getLoadWorker().isRunning()) {
+          stage.setTitle("Willow");
         }
       }
     });
@@ -245,21 +234,17 @@ public class Willow extends Application {
     sidebar.setLoadControl(newBrowser.createLoadControl());
 
     // make the chrome's location field respond to changes in the new browser's location.
-    browserLocFieldChangeListener = new ChangeListener<String>() {
-      @Override public void changed(ObservableValue<? extends String> observableValue, String oldLoc, String newLoc) {
-        if (!chromeLocField.getText().equals(newLoc)) {
-          chromeLocField.setText(newLoc);
-        }
+    browserLocFieldChangeListener = (observableValue, oldLoc, newLoc) -> {
+      if (!chromeLocField.getText().equals(newLoc)) {
+        chromeLocField.setText(newLoc);
       }
     };
     newBrowser.getLocField().textProperty().addListener(browserLocFieldChangeListener);
 
     // make the new browser respond to changes the user makes to the chrome's location.
-    chromeLocFieldChangeListener = new ChangeListener<String>() {
-      @Override public void changed(ObservableValue<? extends String> observableValue, String oldLoc, String newLoc) {
-        if (!newBrowser.getLocField().getText().equals(newLoc)) {
-          newBrowser.getLocField().setText(newLoc);
-        }
+    chromeLocFieldChangeListener = (observableValue, oldLoc, newLoc) -> {
+      if (!newBrowser.getLocField().getText().equals(newLoc)) {
+        newBrowser.getLocField().setText(newLoc);
       }
     };
     chromeLocField.textProperty().addListener(chromeLocFieldChangeListener);
