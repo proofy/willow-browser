@@ -136,8 +136,7 @@ public class NavTools {
         hideSidebar.onFinishedProperty().set(actionEvent -> chrome.getSidebarDisplay().setVisible(false));
 
         // show sidebar.
-        final Animation showSidebar = new
-Transition() {
+        final Animation showSidebar = new Transition() {
             {
                 setCycleDuration(Duration.millis(250));
             }
