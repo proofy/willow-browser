@@ -21,15 +21,10 @@
 
 package org.jewelsea.willow.navigation;
 
-import javafx.animation.Animation;
-import javafx.animation.Transition;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.InnerShadow;
@@ -39,8 +34,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.jewelsea.willow.Willow;
+import org.jewelsea.willow.util.SlideAnimator;
 import org.jewelsea.willow.util.Util;
 
 public class NavTools {
@@ -120,56 +115,9 @@ public class NavTools {
         sidebarButton.setGraphic(sidebarGraphic);
         sidebarButton.setTooltip(new Tooltip("Play sidebar hide and seek"));
         sidebarButton.setStyle("-fx-font-weight: bold;");
-        final DoubleProperty startWidth = new SimpleDoubleProperty();
-
-        // todo java 8 has a weird background issue on resize - file bug
-        // hide sidebar.
-        final Animation hideSidebar = new Transition() {
-            {
-                setCycleDuration(Duration.millis(250));
-            }
-
-            protected void interpolate(double frac) {
-                final double curWidth = startWidth.get() * (1.0 - frac);
-                ScrollPane sidebar = chrome.getSidebar().getScroll();
-                sidebar.setPrefWidth(curWidth);   // todo resize a spacing underlay to allow the scene to adjust.
-                sidebar.setTranslateX(-startWidth.get() + curWidth);
-            }
-        };
-        hideSidebar.onFinishedProperty().set(actionEvent ->
-                chrome.getSidebar().getScroll().setVisible(false)
+        sidebarButton.setOnAction(event ->
+                SlideAnimator.slide(sidebarButton, chrome.getSidebar().getScroll(), Side.LEFT)
         );
-
-        // show sidebar.
-        final Animation showSidebar = new Transition() {
-            {
-                setCycleDuration(Duration.millis(250));
-            }
-
-            protected void interpolate(double frac) {
-                final double curWidth = startWidth.get() * frac;
-                ScrollPane sidebar = chrome.getSidebar().getScroll();
-                sidebar.setPrefWidth(curWidth);
-                sidebar.setTranslateX(-startWidth.get() + curWidth);
-            }
-        };
-
-        sidebarButton.setOnAction(actionEvent -> {
-            ScrollPane sidebar = chrome.getSidebar().getScroll();
-            sidebar.setMinWidth(Control.USE_PREF_SIZE);
-
-            if (    Animation.Status.STOPPED.equals(showSidebar.getStatus())
-                 && Animation.Status.STOPPED.equals(hideSidebar.statusProperty().get())
-            ) {
-                if (sidebar.isVisible()) {
-                    startWidth.set(sidebar.getWidth());
-                    hideSidebar.play();
-                } else {
-                    sidebar.setVisible(true);
-                    showSidebar.play();
-                }
-            }
-        });
 
         final Button fullscreenButton = new Button();
         fullscreenButton.setTooltip(new Tooltip("Go huge"));
