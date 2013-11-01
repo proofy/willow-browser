@@ -52,9 +52,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 
 public class Willow extends Application {
-    public static final String APPLICATION_ICON = "WillowTreeIcon.png";
-    public static final String DEFAULT_HOME_LOCATION = "http://docs.oracle.com/javafx/2/get_started/animation.htm";
+    public static final String APPLICATION_ICON =
+            "WillowTreeIcon.png";
+    public static final String DEFAULT_HOME_LOCATION =
+            "http://docs.oracle.com/javafx/2/get_started/animation.htm";
+    public static final String STYLESHEET =
+            "org/jewelsea/willow/css/willow.css";
     public StringProperty homeLocationProperty = new SimpleStringProperty(DEFAULT_HOME_LOCATION);
+    private static final double INITIAL_SCENE_HEIGHT = 600;
+    private static final double INITIAL_SCENE_WIDTH = 1121;
     private SideBar sidebar;                              // sidebar for controlling the app.
     private TabManager tabManager;                        // tab manager for managing browser tabs.
     private BorderPane mainLayout = new BorderPane();     // layout of the browser application.
@@ -106,8 +112,12 @@ public class Willow extends Application {
         browserChanged(null, getBrowser(), stage, overlayLayer);
 
         // create the scene.
-        final Scene scene = new Scene(overlaidLayout, 1121, 600);
-        scene.getStylesheets().add("org/jewelsea/willow/css/willow.css");
+        final Scene scene = new Scene(
+                overlaidLayout,
+                INITIAL_SCENE_WIDTH,
+                INITIAL_SCENE_HEIGHT
+        );
+        scene.getStylesheets().add(STYLESHEET);
         overlaidLayout.setStyle("-fx-background: rgba(100, 0, 0, 0)");
 
         // set some sizing constraints on the scene.

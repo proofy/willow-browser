@@ -34,14 +34,12 @@ import org.jewelsea.willow.util.Util;
 /**
  * Sidebar panel for showing Benchmark information
  */
-public class BenchPanel {
-    public static TitledPane createPanel(final Willow chrome) {
+public class BenchPanel extends TitledPane {
+    public BenchPanel(final Willow chrome) {
         // create a layout container for the panel.
         VBox benchPanel = new VBox();
         benchPanel.setSpacing(5);
         benchPanel.setStyle("-fx-padding: 5");
-        TitledPane benchTitle = new TitledPane("Benchmarks", benchPanel);
-        benchTitle.setStyle("-fx-font-size: 16px;");
 
         // info on benchmarks.
         // format: name, link, icon, (if link and icon are empty, then defines a benchmark category).
@@ -50,9 +48,10 @@ public class BenchPanel {
                 {"HTML 5 Test", "http://www.html5test.com", "HTML5_Badge_32.png"},
                 {"Acid 3 Test", "http://acid3.acidtests.org/", "acid.png"},
                 {"JavaScript Performance", "", ""},
-                {"WebKit SunSpider", "http://www.webkit.org/perf/sunspider-0.9.1/sunspider-0.9.1/driver.html", "webkit.png"},
-                {"Google V8", "http://v8.googlecode.com/svn/data/benchmarks/v5/run.html", "google.png"},
-                {"Mozilla Kraken", "http://krakenbenchmark.mozilla.org/kraken-1.0/driver.html", "firefox_32.png"},
+                {"WebKit SunSpider", "http://www.webkit.org/perf/sunspider-1.0.2/sunspider-1.0.2/driver.html", "webkit.png"},
+                {"Google Octane", "http://octane-benchmark.googlecode.com/svn/latest/index.html", "google.png"},
+// the kraken may not be unleashed - it hangs on the first ai-star test - maybe later...
+//                {"Mozilla Kraken", "http://krakenbenchmark.mozilla.org", "firefox_32.png"},
                 {"Rendering Performance", ""},
                 {"Bubble Mark", "http://bubblemark.com/dhtml.htm", "ball.png"},
                 {"Guimark", "http://www.craftymind.com/factory/guimark/GUIMark_HTML4.html", "guimark.png"}
@@ -99,6 +98,9 @@ public class BenchPanel {
         spacer.setPrefHeight(5);
         benchPanel.getChildren().add(spacer);
 
-        return benchTitle;
+        setText("Benchmarks");
+        setContent(benchPanel);
+        setStyle("-fx-font-size: 16px;");
+        setExpanded(false);
     }
 }
