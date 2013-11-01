@@ -29,6 +29,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.InnerShadow;
@@ -130,11 +131,14 @@ public class NavTools {
 
             protected void interpolate(double frac) {
                 final double curWidth = startWidth.get() * (1.0 - frac);
-                chrome.getSidebarDisplay().setPrefWidth(curWidth);   // todo resize a spacing underlay to allow the scene to adjust.
-                chrome.getSidebarDisplay().setTranslateX(-startWidth.get() + curWidth);
+                ScrollPane sidebar = chrome.getSidebar().getScroll();
+                sidebar.setPrefWidth(curWidth);   // todo resize a spacing underlay to allow the scene to adjust.
+                sidebar.setTranslateX(-startWidth.get() + curWidth);
             }
         };
-        hideSidebar.onFinishedProperty().set(actionEvent -> chrome.getSidebarDisplay().setVisible(false));
+        hideSidebar.onFinishedProperty().set(actionEvent ->
+                chrome.getSidebar().getScroll().setVisible(false)
+        );
 
         // show sidebar.
         final Animation showSidebar = new Transition() {
@@ -144,20 +148,24 @@ public class NavTools {
 
             protected void interpolate(double frac) {
                 final double curWidth = startWidth.get() * frac;
-                chrome.getSidebarDisplay().setPrefWidth(curWidth);
-                chrome.getSidebarDisplay().setTranslateX(-startWidth.get() + curWidth);
+                ScrollPane sidebar = chrome.getSidebar().getScroll();
+                sidebar.setPrefWidth(curWidth);
+                sidebar.setTranslateX(-startWidth.get() + curWidth);
             }
         };
 
         sidebarButton.setOnAction(actionEvent -> {
-            chrome.getSidebarDisplay().setMinWidth(Control.USE_PREF_SIZE);
+            ScrollPane sidebar = chrome.getSidebar().getScroll();
+            sidebar.setMinWidth(Control.USE_PREF_SIZE);
 
-            if (showSidebar.statusProperty().get().equals(Animation.Status.STOPPED) && hideSidebar.statusProperty().get().equals(Animation.Status.STOPPED)) {
-                if (chrome.getSidebarDisplay().isVisible()) {
-                    startWidth.set(chrome.getSidebarDisplay().getWidth());
+            if (    Animation.Status.STOPPED.equals(showSidebar.getStatus())
+                 && Animation.Status.STOPPED.equals(hideSidebar.statusProperty().get())
+            ) {
+                if (sidebar.isVisible()) {
+                    startWidth.set(sidebar.getWidth());
                     hideSidebar.play();
                 } else {
-                    chrome.getSidebarDisplay().setVisible(true);
+                    sidebar.setVisible(true);
                     showSidebar.play();
                 }
             }
@@ -165,7 +173,9 @@ public class NavTools {
 
         final Button fullscreenButton = new Button();
         fullscreenButton.setTooltip(new Tooltip("Go huge"));
-        final ImageView fullscreenGraphic = new ImageView(Util.getImage("1325834738_gtk-fullscreen.png"));
+        final ImageView fullscreenGraphic = new ImageView(
+                Util.getImage("1325834738_gtk-fullscreen.png")
+        );
         fullscreenGraphic.setEffect(colorAdjust);
         fullscreenGraphic.setPreserveRatio(true);
         fullscreenGraphic.setFitHeight(14);
@@ -180,7 +190,16 @@ public class NavTools {
         navPane.setAlignment(Pos.CENTER);
         navPane.getStyleClass().add("toolbar");
         navPane.setSpacing(5);
-        navPane.getChildren().addAll(sidebarButton, backButton, forwardButton, chrome.getChromeLocField(), chrome.getTabManager().getTabPane(), chrome.getTabManager().getNewTabButton(), navButton, fullscreenButton);
+        navPane.getChildren().addAll(
+                sidebarButton,
+                backButton,
+                forwardButton,
+                chrome.getChromeLocField(),
+                chrome.getTabManager().getTabPane(),
+                chrome.getTabManager().getNewTabButton(),
+                navButton,
+                fullscreenButton
+        );
         navPane.setFillHeight(false);
         Platform.runLater(() -> navPane.setMinHeight(navPane.getHeight()));
 

@@ -143,8 +143,8 @@ public class Willow extends Application {
         // automatically hide and show the sidebar and navbar as we transition in and out of fullscreen.
         final Button navPaneButton = createNavPaneButton(navPane);
         stage.fullScreenProperty().addListener((observableValue, oldValue, newValue) -> {
-            if ((stage.isFullScreen() && getSidebarDisplay().isVisible()) ||
-                    (!stage.isFullScreen() && !getSidebarDisplay().isVisible())) {
+            if ((stage.isFullScreen() && getSidebar().getScroll().isVisible()) ||
+                    (!stage.isFullScreen() && !getSidebar().getScroll().isVisible())) {
                 ((Button) scene.lookup("#sidebarButton")).fire();
             }
             if ((stage.isFullScreen() && navPane.isVisible()) ||
@@ -304,6 +304,10 @@ Transition() {
 
     public BrowserWindow getBrowser() {
         return tabManager.getBrowser();
+    }
+
+    public SideBar getSidebar() {
+        return sidebar;
     }
 
     public VBox getSidebarDisplay() {
