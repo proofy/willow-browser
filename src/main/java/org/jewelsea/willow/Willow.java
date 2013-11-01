@@ -199,8 +199,7 @@ public class Willow extends Application {
         hideNavPane.onFinishedProperty().set(actionEvent -> navPane.setVisible(false));
 
         // show sidebar.
-        final Animation showNavPane = new
-Transition() {
+        final Animation showNavPane = new Transition() {
             {
                 setCycleDuration(Duration.millis(250));
             }
