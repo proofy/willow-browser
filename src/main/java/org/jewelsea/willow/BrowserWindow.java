@@ -210,7 +210,7 @@ public class BrowserWindow {
         return stringWebEvent -> {
             // add controls to the popup.
             final Label promptMessage = new Label(stringWebEvent.getData());
-            final ImageView alertImage = new ImageView(new Image(Util.getResource("alert_48.png")));
+            final ImageView alertImage = new ImageView(Util.getImage("alert_48.png"));
             alertImage.setFitHeight(32);
             alertImage.setPreserveRatio(true);
             promptMessage.setGraphic(alertImage);
@@ -253,7 +253,7 @@ public class BrowserWindow {
             // action button text setup.
             HBox buttonBar = new HBox(20);
 
-            final ImageView confirmImage = new ImageView(new Image(Util.getResource("select_48.png")));
+            final ImageView confirmImage = new ImageView(Util.getImage("select_48.png"));
             confirmImage.setFitHeight(19);
             confirmImage.setPreserveRatio(true);
 
@@ -261,7 +261,7 @@ public class BrowserWindow {
             confirmButton.setGraphic(confirmImage);
             confirmButton.setDefaultButton(true);
 
-            final ImageView denyImage = new ImageView(new Image(Util.getResource("stop_48.png")));
+            final ImageView denyImage = new ImageView(Util.getImage("stop_48.png"));
             denyImage.setFitHeight(19);
             denyImage.setPreserveRatio(true);
 
@@ -304,7 +304,7 @@ public class BrowserWindow {
             // add controls to the popup.
             final Label promptMessage = new Label(promptData.getMessage());
             promptMessage.setWrapText(true);
-            final ImageView promptImage = new ImageView(new Image(Util.getResource("help_64.png")));
+            final ImageView promptImage = new ImageView(Util.getImage("help_64.png"));
             promptImage.setFitHeight(32);
             promptImage.setPreserveRatio(true);
             promptMessage.setGraphic(promptImage);

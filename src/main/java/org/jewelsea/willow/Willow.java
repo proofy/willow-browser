@@ -103,7 +103,7 @@ public class Willow extends Application {
 
         // create the scene.
         final Scene scene = new Scene(overlaidLayout, 1121, 600);
-        scene.getStylesheets().add("org/jewelsea/willow/willow.css");
+        scene.getStylesheets().add("org/jewelsea/willow/css/willow.css");
         overlaidLayout.setStyle("-fx-background: rgba(100, 0, 0, 0)");
 
         // set some sizing constraints on the scene.
@@ -159,7 +159,7 @@ public class Willow extends Application {
         getSidebarDisplay().setMaxWidth(getSidebarDisplay().getWidth());
 
         // add an icon for the application.
-        stage.getIcons().add(new Image(Util.getResource(APPLICATION_ICON)));
+        stage.getIcons().add(Util.getImage(APPLICATION_ICON));
 
         sidebar.getScroll().setPrefViewportWidth(sidebar.getBarDisplay().getWidth());
 

@@ -94,12 +94,7 @@ public class SideBar {
                 "Home",
                 "Fairytale_folder_home.png",
                 "Click to go home or drag the location here to change house",
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        chrome.getBrowser().navTo(chrome.homeLocationProperty.get());
-                    }
-                }
+                actionEvent -> chrome.getBrowser().navTo(chrome.homeLocationProperty.get())
         );
         homeButton.setOnDragOver(event -> {
             Dragboard db = event.getDragboard();
@@ -138,36 +133,27 @@ public class SideBar {
                 "Drag a location here to remember it and click to recall your remembrance",
                 null
         );
-        bookmarksButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                bookmarksMenu.show(bookmarksButton, Side.BOTTOM, 0, 0);
+        bookmarksButton.setOnAction(actionEvent ->
+                bookmarksMenu.show(bookmarksButton, Side.BOTTOM, 0, 0)
+        );
+        bookmarksButton.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasString()) {
+                event.acceptTransferModes(TransferMode.COPY);
             }
+            event.consume();
         });
-        bookmarksButton.setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                Dragboard db = event.getDragboard();
-                if (db.hasString()) {
-                    event.acceptTransferModes(TransferMode.COPY);
-                }
-                event.consume();
+        bookmarksButton.setOnDragDropped(dragEvent -> {
+            Dragboard db = dragEvent.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                // add the dragged url to the bookmarks menu (if it wasn't already there).
+                final String bookmarkUrl = db.getString();
+                if (createBookmark(chrome, bookmarksMenu, bookmarkUrl)) return;
+                success = true;
             }
-        });
-        bookmarksButton.setOnDragDropped(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent dragEvent) {
-                Dragboard db = dragEvent.getDragboard();
-                boolean success = false;
-                if (db.hasString()) {
-                    // add the dragged url to the bookmarks menu (if it wasn't already there).
-                    final String bookmarkUrl = db.getString();
-                    if (createBookmark(chrome, bookmarksMenu, bookmarkUrl)) return;
-                    success = true;
-                }
-                dragEvent.setDropCompleted(success);
-                dragEvent.consume();
-            }
+            dragEvent.setDropCompleted(success);
+            dragEvent.consume();
         });
 
         // create a slider to manage the fontSize
@@ -177,13 +163,10 @@ public class SideBar {
         fontSize.setMinorTickCount(0);
         fontSize.setShowTickMarks(true);
         fontSize.setBlockIncrement(0.1);
-        fontSize.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                chrome.getBrowser().getView().setFontScale(newValue.doubleValue());
-            }
-        });
-        final ImageView fontSizeIcon = new ImageView(new Image(Util.getResource("rsz_2fontsize.png")));
+        fontSize.valueProperty().addListener((observableValue, oldValue, newValue) ->
+                chrome.getBrowser().getView().setFontScale(newValue.doubleValue())
+        );
+        final ImageView fontSizeIcon = new ImageView(Util.getImage("rsz_2fontsize.png"));
         fontSizeIcon.setPreserveRatio(true);
         fontSizeIcon.setFitHeight(32);
         ColorAdjust fontSizeColorAdjust = new ColorAdjust();
@@ -203,25 +186,19 @@ public class SideBar {
                 "Things of beauty",
                 null
         );
-        canvasButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                canvasMenu.show(canvasButton, Side.BOTTOM, 0, 0);
-            }
-        });
+        canvasButton.setOnAction(actionEvent ->
+               canvasMenu.show(canvasButton, Side.BOTTOM, 0, 0)
+        );
 
         // create a reader button.
         final Button readerButton = Util.createIconButton(
                 "Read",
                 "readability.png",
                 "Make the current page easier to read",
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        chrome.getBrowser().getView().getEngine().executeScript(
-                                "window.readabilityUrl='" + chrome.getBrowser().getLocField().getText() + "';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src','http://www.readability.com/bookmarklet/read.js');document.documentElement.appendChild(s);"
-                        );
-                    }
+                actionEvent -> {
+                    chrome.getBrowser().getView().getEngine().executeScript(
+                            "window.readabilityUrl='" + chrome.getBrowser().getLocField().getText() + "';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src','http://www.readability.com/bookmarklet/read.js');document.documentElement.appendChild(s);"
+                    );
                 }
         );
 
@@ -230,11 +207,8 @@ public class SideBar {
                 "Firebug",
                 "firebug.png",
                 "Discover your web page",
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        chrome.getBrowser().getView().getEngine().executeScript("if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}");
-                    }
+                actionEvent -> {
+                    chrome.getBrowser().getView().getEngine().executeScript("if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}");
                 }
         );
 

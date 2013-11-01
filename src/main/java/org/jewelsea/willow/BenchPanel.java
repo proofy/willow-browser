@@ -83,7 +83,7 @@ public class BenchPanel {
 
                 // add a graphic to the link.
                 if (!link[2].equals("")) {
-                    final Image image = new Image(Util.getResource(link[2]));
+                    final Image image = Util.getImage(link[2]);
                     final ImageView imageView = new ImageView(image);
                     imageView.setPreserveRatio(true);
                     imageView.setFitHeight(16);

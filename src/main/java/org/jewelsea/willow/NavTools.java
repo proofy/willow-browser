@@ -47,7 +47,7 @@ public class NavTools {
         final Button backButton = new Button();
         backButton.setId("backButton"); // todo I don't like this id set just for lookup - reference would be better
         backButton.setTooltip(new Tooltip("Go back or right click for history"));
-        final ImageView backGraphic = new ImageView(new Image(Util.getResource("239706184.png")));
+        final ImageView backGraphic = new ImageView(Util.getImage("239706184.png"));
         final ColorAdjust backColorAdjust = new ColorAdjust();
         backColorAdjust.setBrightness(-0.1);
         backColorAdjust.setContrast(-0.1);
@@ -70,7 +70,7 @@ public class NavTools {
         final Button forwardButton = new Button();
         forwardButton.setId("forwardButton"); // todo I don't like this id set just for lookup - reference would be better
         forwardButton.setTranslateX(-2);
-        final ImageView forwardGraphic = new ImageView(new Image(Util.getResource("1813406178.png")));
+        final ImageView forwardGraphic = new ImageView(Util.getImage("1813406178.png"));
         final ColorAdjust forwardColorAdjust = new ColorAdjust();
         forwardColorAdjust.setBrightness(-0.1);
         forwardColorAdjust.setContrast(-0.1);
@@ -93,7 +93,7 @@ public class NavTools {
         // create a navigate button.
         final Button navButton = new Button();
         navButton.setTooltip(new Tooltip("Go to or rejuvenate the location"));
-        final ImageView navGraphic = new ImageView(new Image(Util.getResource("Forward Arrow.png")));
+        final ImageView navGraphic = new ImageView(Util.getImage("Forward Arrow.png"));
         final ColorAdjust navColorAdjust = new ColorAdjust();
         navColorAdjust.setContrast(-0.7);
         navGraphic.setEffect(navColorAdjust);
@@ -107,7 +107,7 @@ public class NavTools {
         // create a button to hide and show the sidebar.
         final Button sidebarButton = new Button();
         sidebarButton.setId("sidebarButton");
-        final ImageView sidebarGraphic = new ImageView(new Image(Util.getResource("Down Arrow.png")));
+        final ImageView sidebarGraphic = new ImageView(Util.getImage("Down Arrow.png"));
         final ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setContrast(-0.7);
         sidebarGraphic.setFitHeight(10);
@@ -164,7 +164,7 @@ public class NavTools {
 
         final Button fullscreenButton = new Button();
         fullscreenButton.setTooltip(new Tooltip("Go huge"));
-        final ImageView fullscreenGraphic = new ImageView(new Image(Util.getResource("1325834738_gtk-fullscreen.png")));
+        final ImageView fullscreenGraphic = new ImageView(Util.getImage("1325834738_gtk-fullscreen.png"));
         fullscreenGraphic.setEffect(colorAdjust);
         fullscreenGraphic.setPreserveRatio(true);
         fullscreenGraphic.setFitHeight(14);

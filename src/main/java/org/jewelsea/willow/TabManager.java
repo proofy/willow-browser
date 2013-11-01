@@ -84,7 +84,7 @@ public class TabManager {
 
         // create a button for opening a new tab.
         newTabButton.setTooltip(new Tooltip("Tabulate"));
-        final ImageView tabGraphic = new ImageView(new Image(Util.getResource("Plus.png")));
+        final ImageView tabGraphic = new ImageView(Util.getImage("Plus.png"));
         final ColorAdjust tabColorAdjust = new ColorAdjust();
         tabColorAdjust.setContrast(-0.7);
         tabGraphic.setEffect(tabColorAdjust);

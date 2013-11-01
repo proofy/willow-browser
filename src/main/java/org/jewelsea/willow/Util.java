@@ -50,7 +50,7 @@ public class Util {
         button.getStyleClass().add("icon-button");
         button.setMaxWidth(Double.MAX_VALUE);
         button.setAlignment(Pos.CENTER_LEFT);
-        final ImageView imageView = new ImageView(new Image(getResource(imageLoc)));
+        final ImageView imageView = new ImageView(getImage(imageLoc));
         imageView.setFitHeight(16);
         imageView.setPreserveRatio(true);
         button.setGraphic(imageView);
@@ -82,9 +82,14 @@ public class Util {
         return new javafx.scene.image.Image(in, width, height, resize, smooth);
     }
 
-    // get a resource relative to the application class.
+    /** get a resource relative to the application class. */
     static String getResource(String path) {
         return Willow.class.getResource(path).toExternalForm();
+    }
+
+    /** get a image resource in an images/ path relative to the application class. */
+    public static Image getImage(String imageFilename) {
+        return new Image(Util.getResource("images/" + imageFilename));
     }
 
     // debugging routine to dump the scene graph.
