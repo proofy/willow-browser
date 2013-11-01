@@ -51,50 +51,87 @@ import java.util.logging.Logger;
  */
 public class PDFViewer extends JFrame
         implements KeyListener, TreeSelectionListener,
-  PageChangeListener {
+        PageChangeListener {
 
     public final static String TITLE = "SwingLabs PDF Viewer";
-    /** The current PDFFile */
+    /**
+     * The current PDFFile
+     */
     PDFFile curFile;
-    /** the name of the current document */
+    /**
+     * the name of the current document
+     */
     String docName;
-    /** The split between thumbs and page */
+    /**
+     * The split between thumbs and page
+     */
     JSplitPane split;
-    /** The thumbnail scroll pane */
+    /**
+     * The thumbnail scroll pane
+     */
     JScrollPane thumbscroll;
-    /** The thumbnail display */
+    /**
+     * The thumbnail display
+     */
     ThumbPanel thumbs;
-    /** The page display */
+    /**
+     * The page display
+     */
     PagePanel page;
-    /** The full screen page display, or null if not in full screen mode */
+    /**
+     * The full screen page display, or null if not in full screen mode
+     */
     PagePanel fspp;
 
     //    Thread anim;
-    /** The current page number (starts at 0), or -1 if no page */
+    /**
+     * The current page number (starts at 0), or -1 if no page
+     */
     int curpage = -1;
-    /** the full screen button */
+    /**
+     * the full screen button
+     */
     JToggleButton fullScreenButton;
-    /** the current page number text field */
+    /**
+     * the current page number text field
+     */
     JTextField pageField;
-    /** the full screen window, or null if not in full screen mode */
+    /**
+     * the full screen window, or null if not in full screen mode
+     */
     FullScreenWindow fullScreen;
-    /** the root of the outline, or null if there is no outline */
+    /**
+     * the root of the outline, or null if there is no outline
+     */
     OutlineNode outline = null;
-    /** The page format for printing */
+    /**
+     * The page format for printing
+     */
     PageFormat pformat = PrinterJob.getPrinterJob().defaultPage();
-    /** true if the thumb panel should exist at all */
+    /**
+     * true if the thumb panel should exist at all
+     */
     boolean doThumb = true;
-    /** flag to indicate when a newly added document has been announced */
+    /**
+     * flag to indicate when a newly added document has been announced
+     */
     Flag docWaiter;
-    /** a thread that pre-loads the next page for faster response */
+    /**
+     * a thread that pre-loads the next page for faster response
+     */
     PagePreparer pagePrep;
-    /** the window containing the pdf outline, or null if one doesn't exist */
+    /**
+     * the window containing the pdf outline, or null if one doesn't exist
+     */
     JDialog olf;
-    /** the document menu */
+    /**
+     * the document menu
+     */
     JMenu docMenu;
 
     /**
      * utility method to get an icon from the resources of this class
+     *
      * @param name the name of the icon
      * @return the icon, or null if the icon wasn't found.
      */
@@ -165,6 +202,7 @@ public class PDFViewer extends JFrame
             doZoom(zoomfactor);
         }
     }
+
     ZoomAction zoomInAction = new ZoomAction("Zoom in",
             getIcon("/com/sun/pdfview/gfx/zoomin.gif"),
             2.0);
@@ -211,6 +249,7 @@ public class PDFViewer extends JFrame
             doThumbs(!isOpen);
         }
     }
+
     ThumbAction thumbAction = new ThumbAction();
     Action fullScreenAction = new AbstractAction("Full screen",
             getIcon("/com/sun/pdfview/gfx/fullscrn.gif")) {
@@ -247,6 +286,7 @@ public class PDFViewer extends JFrame
     /**
      * Create a new PDFViewer based on a user, with or without a thumbnail
      * panel.
+     *
      * @param useThumbs true if the thumb panel should exist, false if not.
      */
     public PDFViewer(boolean useThumbs) {
@@ -395,6 +435,7 @@ public class PDFViewer extends JFrame
     /**
      * Changes the displayed page, desyncing if we're not on the
      * same page as a presenter.
+     *
      * @param pagenum the page to display
      */
     public void gotoPage(int pagenum) {
@@ -408,6 +449,7 @@ public class PDFViewer extends JFrame
 
     /**
      * Changes the displayed page.
+     *
      * @param pagenum the page to display
      */
     public void forceGotoPage(int pagenum) {
@@ -458,7 +500,8 @@ public class PDFViewer extends JFrame
         /**
          * Creates a new PagePreparer to prepare the page after the current
          * one.
-         * @param waitforPage the current page number, 0 based 
+         *
+         * @param waitforPage the current page number, 0 based
          */
         public PagePreparer(int waitforPage) {
             setDaemon(true);
@@ -497,7 +540,7 @@ public class PDFViewer extends JFrame
                     //                    System.out.println("Generating image for page " + (prepPage + 2));
 
                     pdfPage.getImage(size.width, size.height, clip, null, true, true);
-                //		    System.out.println("Generated image for page "+ (prepPage+2));
+                    //		    System.out.println("Generated image for page "+ (prepPage+2));
                 }
             }
         }
@@ -556,7 +599,7 @@ public class PDFViewer extends JFrame
     /**
      * <p>Open a specific pdf file.  Creates a DocumentInfo from the file,
      * and opens that.</p>
-     *
+     * <p>
      * <p><b>Note:</b> Mapping the file locks the file until the PDFFile
      * is closed.</p>
      *
@@ -579,7 +622,7 @@ public class PDFViewer extends JFrame
     /**
      * <p>Open a specific pdf file.  Creates a DocumentInfo from the file,
      * and opens that.</p>
-     *
+     * <p>
      * <p><b>Note:</b> By not memory mapping the file its contents are
      * not locked down while PDFFile is open.</p>
      *
@@ -637,7 +680,7 @@ public class PDFViewer extends JFrame
             newfile = new PDFFile(buf);
         } catch (IOException ioe) {
             openError(path + " doesn't appear to be a PDF file." +
-                      "\n: " + ioe.getMessage ());
+                    "\n: " + ioe.getMessage());
             return;
         }
 
@@ -696,6 +739,7 @@ public class PDFViewer extends JFrame
         JOptionPane.showMessageDialog(split, message, "Error opening file",
                 JOptionPane.ERROR_MESSAGE);
     }
+
     /**
      * A file filter for PDF files.
      */
@@ -732,9 +776,9 @@ public class PDFViewer extends JFrame
         } catch (Exception e) {
             JOptionPane.showMessageDialog(split,
                     "Opening files from your local " +
-                    "disk is not available\nfrom the " +
-                    "Java Web Start version of this " +
-                    "program.\n",
+                            "disk is not available\nfrom the " +
+                            "Java Web Start version of this " +
+                            "program.\n",
                     "Error opening directory",
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -743,6 +787,7 @@ public class PDFViewer extends JFrame
 
     /**
      * Open a local file, given a string filename
+     *
      * @param name the name of the file to open
      */
     public void doOpen(String name) {
@@ -872,7 +917,7 @@ public class PDFViewer extends JFrame
         if (show) {
             split.setDividerLocation((int) thumbs.getPreferredSize().width +
                     (int) thumbscroll.getVerticalScrollBar().
-                    getWidth() + 4);
+                            getWidth() + 4);
         } else {
             split.setDividerLocation(0);
         }
@@ -880,9 +925,10 @@ public class PDFViewer extends JFrame
 
     /**
      * Enter full screen mode
+     *
      * @param force true if the user should be prompted for a screen to
-     * use in a multiple-monitor setup.  If false, the user will only be
-     * prompted once.
+     *              use in a multiple-monitor setup.  If false, the user will only be
+     *              prompted once.
      */
     public void doFullScreen(boolean force) {
         setFullScreenMode(fullScreen == null, force);
@@ -966,9 +1012,10 @@ public class PDFViewer extends JFrame
 
     /**
      * Starts or ends full screen mode.
-     * @param full true to enter full screen mode, false to leave
+     *
+     * @param full  true to enter full screen mode, false to leave
      * @param force true if the user should be prompted for a screen
-     * to use the second time full screen mode is entered.
+     *              to use the second time full screen mode is entered.
      */
     public void setFullScreenMode(boolean full, boolean force) {
         //	curpage= -1;
@@ -1049,7 +1096,9 @@ public class PDFViewer extends JFrame
         Thread anim;
         static final long TIMEOUT = 500;
 
-        /** add the digit to the page number and start the timeout thread */
+        /**
+         * add the digit to the page number and start the timeout thread
+         */
         public synchronized void keyTyped(int keyval) {
             value = value * 10 + keyval;
             timeout = System.currentTimeMillis() + TIMEOUT;
@@ -1087,6 +1136,7 @@ public class PDFViewer extends JFrame
             }
         }
     }
+
     PageBuilder pb = new PageBuilder();
 
     public void keyReleased(KeyEvent evt) {
