@@ -19,7 +19,7 @@
  * Contact details: http://jewelsea.wordpress.com
  */
 
-package org.jewelsea.willow;
+package org.jewelsea.willow.browser;
 
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;

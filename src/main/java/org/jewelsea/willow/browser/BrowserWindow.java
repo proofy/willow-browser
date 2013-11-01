@@ -19,7 +19,7 @@
  * Contact details: http://jewelsea.wordpress.com
  */
 
-package org.jewelsea.willow;
+package org.jewelsea.willow.browser;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -37,7 +37,6 @@ import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -51,6 +50,10 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import org.jewelsea.willow.helpers.FavIconHandler;
+import org.jewelsea.willow.helpers.PDFViewer;
+import org.jewelsea.willow.navigation.History;
+import org.jewelsea.willow.util.Util;
 
 import javax.swing.*;
 import java.io.*;

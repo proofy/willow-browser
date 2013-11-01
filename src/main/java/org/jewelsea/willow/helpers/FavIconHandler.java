@@ -19,12 +19,14 @@
  * Contact details: http://jewelsea.wordpress.com
  */
 
-package org.jewelsea.willow;
+package org.jewelsea.willow.helpers;
 
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import net.sf.image4j.codec.ico.ICODecoder;
+import org.jewelsea.willow.util.LruCache;
+import org.jewelsea.willow.util.Util;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;

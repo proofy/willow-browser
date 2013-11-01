@@ -19,7 +19,7 @@
  * Contact details: http://jewelsea.wordpress.com
  */
 
-package org.jewelsea.willow;
+package org.jewelsea.willow.util;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,6 +33,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import org.jewelsea.willow.Willow;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -62,7 +63,7 @@ public class Util {
     }
 
     // turn an awt image into a JavaFX image.
-    static javafx.scene.image.Image bufferedImageToFXImage(java.awt.Image image, double width, double height, boolean resize, boolean smooth) throws IOException {
+    public static javafx.scene.image.Image bufferedImageToFXImage(java.awt.Image image, double width, double height, boolean resize, boolean smooth) throws IOException {
         if (!(image instanceof RenderedImage)) {
             BufferedImage bufferedImage =
                     new BufferedImage(

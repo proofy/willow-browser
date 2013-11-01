@@ -19,7 +19,7 @@
  * Contact details: http://jewelsea.wordpress.com
  */
 
-package org.jewelsea.willow;
+package org.jewelsea.willow.navigation;
 
 import javafx.animation.Animation;
 import javafx.animation.Transition;
@@ -32,7 +32,6 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.InnerShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -40,6 +39,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.jewelsea.willow.Willow;
+import org.jewelsea.willow.util.Util;
 
 public class NavTools {
     public static Pane createNavPane(final Willow chrome) {

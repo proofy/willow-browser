@@ -19,7 +19,7 @@
  * Contact details: http://jewelsea.wordpress.com
  */
 
-package org.jewelsea.willow;
+package org.jewelsea.willow.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
