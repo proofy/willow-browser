@@ -27,6 +27,8 @@ import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
 import org.jewelsea.willow.widgets.IconButton;
 
+import static org.jewelsea.willow.util.ResourceUtil.getString;
+
 /**
  * Sidebar panel for development tools
  */
@@ -36,7 +38,7 @@ public class DeveloperPanel extends TitledPane {
         final Button firebugButton = new IconButton(
                 "Firebug",
                 "firebug.png",
-                "Discover your web page",
+                getString("developer-panel.firebug.tooltip"),
                 actionEvent -> {
                     chrome.getBrowser().getView().getEngine().executeScript("if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}");
                 }
@@ -48,7 +50,7 @@ public class DeveloperPanel extends TitledPane {
         developmentBox.setStyle("-fx-padding: 5");
         developmentBox.getChildren().addAll(firebugButton);
 
-        setText("Development");
+        setText(getString("developer-panel.title"));
         setContent(developmentBox);
         getStyleClass().add("sidebar-panel");
         setExpanded(false);

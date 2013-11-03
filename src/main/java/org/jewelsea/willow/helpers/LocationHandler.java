@@ -28,6 +28,8 @@ import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 
+import static org.jewelsea.willow.util.ResourceUtil.getString;
+
 public class LocationHandler {
     public static void handleLocation(WebView view, String location) {
         // todo try the JavaFX based jpedalfx viewer instead...
@@ -56,17 +58,20 @@ public class LocationHandler {
             // create a file save option for performing a download.
             FileChooser chooser = new FileChooser();
             chooser.setTitle("Save " + location);
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Downloadable File", downloadableExtension));
+            chooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter(
+                            getString("download-filechooser.title"),
+                            downloadableExtension
+                    )
+            );
+
             int filenameIdx = location.lastIndexOf("/") + 1;
             if (filenameIdx != 0) {
                 File saveFile = chooser.showSaveDialog(view.getScene().getWindow());
 
                 if (saveFile != null) {
-                    BufferedInputStream is = null;
-                    BufferedOutputStream os = null;
-                    try {
-                        is = new BufferedInputStream(new URL(location).openStream());
-                        os = new BufferedOutputStream(new FileOutputStream(saveFile));
+                    try (BufferedInputStream is = new BufferedInputStream(new URL(location).openStream());
+                         BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(saveFile));) {
                         int b = is.read();
                         while (b != -1) {
                             os.write(b);
@@ -74,17 +79,10 @@ public class LocationHandler {
                         }
                     } catch (IOException e) {
                         System.out.println("Unable to save file: " + e);
-                    } finally {
-                        try {
-                            if (is != null) is.close();
-                        } catch (IOException e) { /** no action required. */}
-                        try {
-                            if (os != null) os.close();
-                        } catch (IOException e) { /** no action required. */}
                     }
                 }
 
-                // todo provide feedback on the save function and provide a download list and download list lookup.
+                // todo shell the download out to a task, provide feedback on the save function and provide a download list and download list lookup.
             }
         }
     }

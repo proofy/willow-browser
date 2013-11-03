@@ -35,16 +35,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.jewelsea.willow.Willow;
+import org.jewelsea.willow.util.ResourceUtil;
 import org.jewelsea.willow.util.SlideAnimator;
-import org.jewelsea.willow.util.Util;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class NavTools {
     public static Pane createNavPane(final Willow chrome) {
         // create a back button.
         final Button backButton = new Button();
         backButton.setId("backButton"); // todo I don't like this id set just for lookup - reference would be better
-        backButton.setTooltip(new Tooltip("Go back or right click for history"));
-        final ImageView backGraphic = new ImageView(Util.getImage("239706184.png"));
+        backButton.setTooltip(new Tooltip(getString("nav-toolbar.back.tooltip")));
+        final ImageView backGraphic = new ImageView(ResourceUtil.getImage("239706184.png"));
         final ColorAdjust backColorAdjust = new ColorAdjust();
         backColorAdjust.setBrightness(-0.1);
         backColorAdjust.setContrast(-0.1);
@@ -67,7 +69,7 @@ public class NavTools {
         final Button forwardButton = new Button();
         forwardButton.setId("forwardButton"); // todo I don't like this id set just for lookup - reference would be better
         forwardButton.setTranslateX(-2);
-        final ImageView forwardGraphic = new ImageView(Util.getImage("1813406178.png"));
+        final ImageView forwardGraphic = new ImageView(ResourceUtil.getImage("1813406178.png"));
         final ColorAdjust forwardColorAdjust = new ColorAdjust();
         forwardColorAdjust.setBrightness(-0.1);
         forwardColorAdjust.setContrast(-0.1);
@@ -75,7 +77,7 @@ public class NavTools {
         forwardGraphic.setPreserveRatio(true);
         forwardGraphic.setFitHeight(20);
         forwardButton.setGraphic(forwardGraphic);
-        forwardButton.setTooltip(new Tooltip("Go forward"));
+        forwardButton.setTooltip(new Tooltip(getString("nav-toolbar.forward.tooltip")));
         forwardButton.onActionProperty().set(actionEvent -> {
             if (chrome.getBrowser().getHistory().canNavForward()) {
                 chrome.getBrowser().navTo(chrome.getBrowser().getHistory().requestNavForward());
@@ -89,8 +91,8 @@ public class NavTools {
 
         // create a navigate button.
         final Button navButton = new Button();
-        navButton.setTooltip(new Tooltip("Go to or rejuvenate the location"));
-        final ImageView navGraphic = new ImageView(Util.getImage("Forward Arrow.png"));
+        navButton.setTooltip(new Tooltip(getString("nav-toolbar.go.tooltip")));
+        final ImageView navGraphic = new ImageView(ResourceUtil.getImage("Forward Arrow.png"));
         final ColorAdjust navColorAdjust = new ColorAdjust();
         navColorAdjust.setContrast(-0.7);
         navGraphic.setEffect(navColorAdjust);
@@ -104,7 +106,7 @@ public class NavTools {
         // create a button to hide and show the sidebar.
         final Button sidebarButton = new Button();
         sidebarButton.setId("sidebarButton");
-        final ImageView sidebarGraphic = new ImageView(Util.getImage("Down Arrow.png"));
+        final ImageView sidebarGraphic = new ImageView(ResourceUtil.getImage("Down Arrow.png"));
         final ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setContrast(-0.7);
         sidebarGraphic.setFitHeight(10);
@@ -113,16 +115,16 @@ public class NavTools {
         sidebarButton.setScaleY(0.8);
         sidebarGraphic.setEffect(colorAdjust);
         sidebarButton.setGraphic(sidebarGraphic);
-        sidebarButton.setTooltip(new Tooltip("Play sidebar hide and seek"));
+        sidebarButton.setTooltip(new Tooltip(getString("nav-toolbar.sidebar-visibility.tooltip")));
         sidebarButton.setStyle("-fx-font-weight: bold;");
         sidebarButton.setOnAction(event ->
                 SlideAnimator.slide(sidebarButton, chrome.getSidebar().getScroll(), Side.LEFT)
         );
 
         final Button fullscreenButton = new Button();
-        fullscreenButton.setTooltip(new Tooltip("Go huge"));
+        fullscreenButton.setTooltip(new Tooltip(getString("nav-toolbar.fullscreen.tooltip")));
         final ImageView fullscreenGraphic = new ImageView(
-                Util.getImage("1325834738_gtk-fullscreen.png")
+                ResourceUtil.getImage("1325834738_gtk-fullscreen.png")
         );
         fullscreenGraphic.setEffect(colorAdjust);
         fullscreenGraphic.setPreserveRatio(true);

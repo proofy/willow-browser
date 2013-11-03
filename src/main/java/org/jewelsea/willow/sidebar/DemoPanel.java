@@ -30,6 +30,8 @@ import org.jewelsea.willow.Willow;
 import org.jewelsea.willow.navigation.BookmarkHandler;
 import org.jewelsea.willow.widgets.IconButton;
 
+import static org.jewelsea.willow.util.ResourceUtil.getString;
+
 /**
  * Sidebar panel for showing demos
  */
@@ -47,9 +49,9 @@ public class DemoPanel extends TitledPane {
     public DemoPanel(final Willow chrome) {
         // create a canvas demos button.
         final Button canvasButton = new IconButton(
-                "Canvas Demos",
+                getString("demo-panel.canvas-demos"),
                 "canvas.jpg",
-                "Things of beauty",
+                getString("demo-panel.canvas-demos.tooltip"),
                 null
         );
         canvasButton.setOnAction(actionEvent ->
@@ -65,7 +67,7 @@ public class DemoPanel extends TitledPane {
         demoBox.setStyle("-fx-padding: 5");
         demoBox.getChildren().addAll(canvasButton);
 
-        setText("Demos");
+        setText(getString("demo-panel.title"));
         setContent(demoBox);
         getStyleClass().add("sidebar-panel");
         setExpanded(false);

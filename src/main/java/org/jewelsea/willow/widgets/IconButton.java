@@ -30,7 +30,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
 
 /** A button with an icon */
 public class IconButton extends Button {
@@ -42,7 +42,7 @@ public class IconButton extends Button {
         setMaxWidth(Double.MAX_VALUE);
         setAlignment(Pos.CENTER_LEFT);
 
-        final ImageView imageView = new ImageView(Util.getImage(imageLoc));
+        final ImageView imageView = new ImageView(ResourceUtil.getImage(imageLoc));
         imageView.setFitHeight(16);
         imageView.setPreserveRatio(true);
         setGraphic(imageView);

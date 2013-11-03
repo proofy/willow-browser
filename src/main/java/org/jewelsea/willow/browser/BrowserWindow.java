@@ -41,25 +41,34 @@ import org.jewelsea.willow.dialogs.DialogFactory;
 import org.jewelsea.willow.helpers.FavIconHandler;
 import org.jewelsea.willow.helpers.LocationHandler;
 import org.jewelsea.willow.navigation.History;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.navigation.NavigationHandler;
 
+import static org.jewelsea.willow.util.ResourceUtil.getString;
+import static org.jewelsea.willow.util.ResourceUtil.copyImageView;
+
+/**
+ * A single web browser window to be displayed in a tab.
+ */
 public class BrowserWindow {
     private final WebView view = new WebView();
     private final History history = new History(this);
     private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
-    private final TextField locField = new TextField();    // the location the browser engine is currently pointing at (or where the user can type in where to go next).
     private final ReadOnlyObjectWrapper<ImageView> favicon = new ReadOnlyObjectWrapper<>();
     private final FavIconHandler favIconHandler = FavIconHandler.getInstance();
     private final DialogFactory dialogFactory = new DialogFactory(view);
+    private final NavigationHandler navHandler = new NavigationHandler(view);
+
+    /** the location the browser engine is currently pointing at (or where the user can type in where to go next). */
+    private final TextField locField = new TextField();
 
     public BrowserWindow() {
         // init the location text field.
         HBox.setHgrow(locField, Priority.ALWAYS);
-        locField.setPromptText("Where do you want to go today?");
-        locField.setTooltip(new Tooltip("Enter a location or find happiness."));
+        locField.setPromptText(getString("location.prompt"));
+        locField.setTooltip(new Tooltip(getString("location.tooltip")));
         locField.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-                navTo(locField.getText());
+                navHandler.navTo(locField.getText());
             }
         });
         locField.focusedProperty().addListener((observableValue4, from, to) -> {
@@ -82,11 +91,11 @@ public class BrowserWindow {
         engine.locationProperty().addListener((observableValue3, oldLoc1, newLoc) -> {
             getHistory().executeNav(newLoc); // update the history lists.
             getLocField().setText(newLoc);   // update the location field.
-            favicon.set(Util.copyImageView(favIconHandler.fetchFavIcon(newLoc)));
+            favicon.set(copyImageView(favIconHandler.fetchFavIcon(newLoc)));
         });
 
         // monitor the web views loading state so we can provide progress feedback.
-        Worker worker = engine.getLoadWorker();
+        Worker<Void> worker = engine.getLoadWorker();
         worker.stateProperty().addListener((observableValue, oldState, newState) -> {
             // todo we actually don't have anything interesting to do at the moment.
         });
@@ -128,48 +137,6 @@ public class BrowserWindow {
         });
     }
 
-    public void navTo(String loc) {
-        // modify the request location, to make it easier on the user for typing.
-// todo we probably don't want this default nav for empty .... work out what to do instead ....
-//    if (loc == null || loc.isEmpty()) { // go home if the location field is empty.
-//      loc = chrome.homeLocationProperty.get();
-//    }
-        if (loc == null) loc = "";
-        if (loc.startsWith("google")) { // search google
-            loc = "http://www.google.com/search?q=" + loc.substring("google".length()).trim().replaceAll(" ", "+");
-        } else if (loc.startsWith("bing")) { // search bing
-            loc = "http://www.bing.com/search?q=" + loc.substring("bing".length()).trim().replaceAll(" ", "+");
-        } else if (loc.startsWith("yahoo")) { // search yahoo
-            loc = "http://search.yahoo.com/search?p=" + loc.substring("yahoo".length()).trim().replaceAll(" ", "+");
-        } else if (loc.startsWith("wiki")) {
-            loc = "http://en.wikipedia.org/w/index.php?search=" + loc.substring("wiki".length()).trim().replaceAll(" ", "+");
-        } else if (loc.startsWith("find")) { // search default (google) due to keyword
-            loc = "http://www.google.com/search?q=" + loc.substring("find".length()).trim().replaceAll(" ", "+");
-        } else if (loc.startsWith("search")) { // search default (google) due to keyword
-            loc = "http://www.google.com/search?q=" + loc.substring("search".length()).trim().replaceAll(" ", "+");
-        } else if (loc.contains(" ")) { // search default (google) due to space
-            loc = "http://www.google.com/search?q=" + loc.trim().replaceAll(" ", "+");
-        } else if (!(loc.startsWith("http://") || loc.startsWith("https://")) && !loc.isEmpty()) {
-            loc = "http://" + loc;  // default to http
-        }
-
-        // ask the webview to navigate to the given location.
-        if (!loc.equals(getView().getEngine().getLocation())) {
-            if (!loc.isEmpty()) {
-                getView().getEngine().load(loc);
-            } else {
-                getView().getEngine().loadContent("");
-            }
-        } else {
-            getView().getEngine().reload();
-        }
-
-        // webview will grab the focus if automatically if it has an html input control to display, but we want it
-        // to always grab the focus and kill the focus which was on the input bar, so just set ask the platform to focus
-        // the web view later (we do it later, because if we did it now, the default focus handling might kick in and override our request).
-        Platform.runLater(() -> getView().requestFocus());
-    }
-
     public TextField getLocField() {
         return locField;
     }
@@ -188,6 +155,10 @@ public class BrowserWindow {
 
     public WebView getView() {
         return view;
+    }
+
+    public void navTo(String loc) {
+        navHandler.navTo(loc);
     }
 }
 

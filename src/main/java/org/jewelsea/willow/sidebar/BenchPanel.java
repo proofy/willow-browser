@@ -29,7 +29,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 /**
  * Sidebar panel for showing Benchmark information
@@ -44,15 +46,15 @@ public class BenchPanel extends TitledPane {
         // info on benchmarks.
         // format: name, link, icon, (if link and icon are empty, then defines a benchmark category).
         final String[][] benchmarkLinks = {
-                {"Compliance", "", ""},
+                {getString("bench-panel.compliance"), "", ""},
                 {"HTML 5 Test", "http://www.html5test.com", "HTML5_Badge_32.png"},
                 {"Acid 3 Test", "http://acid3.acidtests.org/", "acid.png"},
-                {"JavaScript Performance", "", ""},
+                {getString("bench-panel.javascript-performance"), "", ""},
                 {"WebKit SunSpider", "http://www.webkit.org/perf/sunspider-1.0.2/sunspider-1.0.2/driver.html", "webkit.png"},
                 {"Google Octane", "http://octane-benchmark.googlecode.com/svn/latest/index.html", "google.png"},
 // the kraken may not be unleashed - it hangs on the first ai-star test - maybe later...
 //                {"Mozilla Kraken", "http://krakenbenchmark.mozilla.org", "firefox_32.png"},
-                {"Rendering Performance", ""},
+                {getString("bench-panel.rendering-performance"), ""},
                 {"Bubble Mark", "http://bubblemark.com/dhtml.htm", "ball.png"},
                 {"Guimark", "http://www.craftymind.com/factory/guimark/GUIMark_HTML4.html", "guimark.png"}
         };
@@ -84,7 +86,7 @@ public class BenchPanel extends TitledPane {
 
                 // add a graphic to the link.
                 if (!link[2].equals("")) {
-                    final Image image = Util.getImage(link[2]);
+                    final Image image = ResourceUtil.getImage(link[2]);
                     final ImageView imageView = new ImageView(image);
                     imageView.setPreserveRatio(true);
                     imageView.setFitHeight(16);
@@ -98,7 +100,7 @@ public class BenchPanel extends TitledPane {
         spacer.setPrefHeight(5);
         benchPanel.getChildren().add(spacer);
 
-        setText("Benchmarks");
+        setText(getString("bench-panel.title"));
         setContent(benchPanel);
         setStyle("-fx-font-size: 16px;");
         setExpanded(false);

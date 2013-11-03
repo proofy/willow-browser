@@ -32,8 +32,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
 import org.jewelsea.willow.navigation.BookmarkHandler;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
 import org.jewelsea.willow.widgets.IconButton;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 /**
  * Sidebar panel for showing demos
@@ -53,9 +55,9 @@ public class NavigationPanel extends TitledPane {
     public NavigationPanel(final Willow chrome) {
         // create a home button to navigate home.
         final Button homeButton = new IconButton(
-                "Home",
+                getString("nav-toolbar.home"),
                 "Fairytale_folder_home.png",
-                "Click to go home or drag the location here to change house",
+                getString("nav-toolbar.home.tooltip"),
                 actionEvent -> chrome.getBrowser().navTo(chrome.homeLocationProperty.get())
         );
         homeButton.setOnDragOver(event -> {
@@ -78,9 +80,9 @@ public class NavigationPanel extends TitledPane {
 
         // create a history button to show the history.
         final Button historyButton = new IconButton(
-                "History",
+                getString("nav-panel.history"),
                 "History.png",
-                "Where did you go?",
+                getString("nav-panel.history.tooltip"),
                 null
         );
         historyButton.setOnAction(e ->
@@ -90,9 +92,9 @@ public class NavigationPanel extends TitledPane {
         // create a bookmarksButton.
         final ContextMenu bookmarksMenu = new ContextMenu();
         final Button bookmarksButton = new IconButton(
-                "Bookmarks",
+                getString("nav-panel.bookmarks"),
                 "1714696718.png",
-                "Drag a location here to remember it and click to recall your remembrance",
+                getString("nav-panel.bookmarks.tooltip"),
                 null
         );
         bookmarksButton.setOnAction(actionEvent ->
@@ -121,7 +123,7 @@ public class NavigationPanel extends TitledPane {
 
         // create a slider to manage the fontSize
         final Slider fontSize = new Slider(0.75, 1.515, 1.0);
-        fontSize.setTooltip(new Tooltip("Make it easier or harder to read"));
+        fontSize.setTooltip(new Tooltip(getString("nav-panel.fontsize.tooltip")));
         fontSize.setMajorTickUnit(0.25);
         fontSize.setMinorTickCount(0);
         fontSize.setShowTickMarks(true);
@@ -129,7 +131,7 @@ public class NavigationPanel extends TitledPane {
         fontSize.valueProperty().addListener((observableValue, oldValue, newValue) ->
                 chrome.getBrowser().getView().setFontScale(newValue.doubleValue())
         );
-        final ImageView fontSizeIcon = new ImageView(Util.getImage("rsz_2fontsize.png"));
+        final ImageView fontSizeIcon = new ImageView(ResourceUtil.getImage("rsz_2fontsize.png"));
         fontSizeIcon.setPreserveRatio(true);
         fontSizeIcon.setFitHeight(32);
         ColorAdjust fontSizeColorAdjust = new ColorAdjust();
@@ -143,9 +145,9 @@ public class NavigationPanel extends TitledPane {
 
         // create a reader button.
         final Button readerButton = new IconButton(
-                "Read",
+                getString("nav-panel.read"),
                 "readability.png",
-                "Make the current page easier to read",
+                getString("nav-panel.read.tooltip"),
                 actionEvent -> {
                     chrome.getBrowser().getView().getEngine().executeScript(
                             "window.readabilityUrl='" + chrome.getBrowser().getLocField().getText() + "';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src','http://www.readability.com/bookmarklet/read.js');document.documentElement.appendChild(s);"
@@ -158,7 +160,7 @@ public class NavigationPanel extends TitledPane {
         navigationBox.setSpacing(5);
         navigationBox.setStyle("-fx-padding: 5");
         navigationBox.getChildren().addAll(homeButton, historyButton, bookmarksButton, readerButton, fontsizer);
-        final TitledPane navPanel = new TitledPane("Navigation", navigationBox);
+        final TitledPane navPanel = new TitledPane(getString("nav-panel.title"), navigationBox);
         navPanel.getStyleClass().add("sidebar-panel");
 
         // create an initial set of bookmarks.
@@ -166,7 +168,7 @@ public class NavigationPanel extends TitledPane {
             BookmarkHandler.installBookmark(chrome, bookmarksMenu, bookmark[0], bookmark[1]);
         }
 
-        setText("Navigation");
+        setText(getString("nav-panel.title"));
         setContent(navigationBox);
         getStyleClass().add("sidebar-panel");
         setExpanded(true);

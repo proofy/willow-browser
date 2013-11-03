@@ -28,7 +28,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 /**
  * Manages a set of active browser windows.
@@ -86,8 +88,8 @@ public class TabManager {
         addTab(new BrowserTab(this));
 
         // create a button for opening a new tab.
-        newTabButton.setTooltip(new Tooltip("Tabulate"));
-        final ImageView tabGraphic = new ImageView(Util.getImage("Plus.png"));
+        newTabButton.setTooltip(new Tooltip(getString("nav-toolbar.createtab.tooltip")));
+        final ImageView tabGraphic = new ImageView(ResourceUtil.getImage("Plus.png"));
         final ColorAdjust tabColorAdjust = new ColorAdjust();
         tabColorAdjust.setContrast(-0.7);
         tabGraphic.setEffect(tabColorAdjust);
@@ -96,7 +98,7 @@ public class TabManager {
         newTabButton.setGraphic(tabGraphic);
         newTabButton.onActionProperty().set(actionEvent -> {
             final BrowserTab newTab = new BrowserTab(this);
-            newTab.setText("New Tab");
+            newTab.setText(getString("newtab.title"));
             addTab(newTab);
         });
     }

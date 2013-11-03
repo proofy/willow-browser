@@ -30,6 +30,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.util.Duration;
 
+/**
+ * Animates sliding a node on and off screen.
+ */
 public class SlideAnimator {
 
     public static void slide(Button controlButton, Control node, Side direction) {

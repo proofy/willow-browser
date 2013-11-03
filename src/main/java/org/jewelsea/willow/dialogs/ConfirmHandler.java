@@ -30,7 +30,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class ConfirmHandler extends VBox {
     public ConfirmHandler(String message, EventHandler<ActionEvent> confirmHandler, EventHandler<ActionEvent> denyHandler) {
@@ -44,19 +46,19 @@ public class ConfirmHandler extends VBox {
         // action button text setup.
         HBox buttonBar = new HBox(20);
 
-        final ImageView confirmImage = new ImageView(Util.getImage("select_48.png"));
+        final ImageView confirmImage = new ImageView(ResourceUtil.getImage("select_48.png"));
         confirmImage.setFitHeight(19);
         confirmImage.setPreserveRatio(true);
 
-        final Button confirmButton = new Button("Confirm");
+        final Button confirmButton = new Button(getString("dialog.confirm"));
         confirmButton.setGraphic(confirmImage);
         confirmButton.setDefaultButton(true);
 
-        final ImageView denyImage = new ImageView(Util.getImage("stop_48.png"));
+        final ImageView denyImage = new ImageView(ResourceUtil.getImage("stop_48.png"));
         denyImage.setFitHeight(19);
         denyImage.setPreserveRatio(true);
 
-        final Button denyButton = new Button("Deny");
+        final Button denyButton = new Button(getString("dialog.deny"));
         denyButton.setGraphic(denyImage);
         denyButton.setCancelButton(true);
 

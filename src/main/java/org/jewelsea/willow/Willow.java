@@ -49,10 +49,12 @@ import org.jewelsea.willow.browser.TabManager;
 import org.jewelsea.willow.navigation.NavTools;
 import org.jewelsea.willow.sidebar.SideBar;
 import org.jewelsea.willow.util.DebugUtil;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class Willow extends Application {
     public static final String APPLICATION_ICON =
@@ -79,7 +81,7 @@ public class Willow extends Application {
     @Override
     public void start(final Stage stage) throws MalformedURLException, UnsupportedEncodingException {
         // set the title bar to the title of the web page (if there is one).
-        stage.setTitle("Willow");
+        stage.setTitle(getString("browser.name"));
 
         // initialize the stuff which can't be initialized in the init method due to stupid threading issues.
         tabManager = new TabManager(chromeLocField);
@@ -87,8 +89,8 @@ public class Willow extends Application {
 
         // initialize the location field in the Chrome.
         chromeLocField.setStyle("-fx-font-size: 14;");
-        chromeLocField.setPromptText("Where do you want to go today?");
-        chromeLocField.setTooltip(new Tooltip("Enter a location or find happiness."));
+        chromeLocField.setPromptText(getString("location.prompt"));
+        chromeLocField.setTooltip(new Tooltip(getString("location.tooltip")));
         chromeLocField.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) {
                 getBrowser().navTo(chromeLocField.getText());
@@ -176,7 +178,7 @@ public class Willow extends Application {
         getSidebarDisplay().setMaxWidth(getSidebarDisplay().getWidth());
 
         // add an icon for the application.
-        stage.getIcons().add(Util.getImage(APPLICATION_ICON));
+        stage.getIcons().add(ResourceUtil.getImage(APPLICATION_ICON));
 
         sidebar.getScroll().setPrefViewportWidth(sidebar.getBarDisplay().getWidth());
 
@@ -267,11 +269,11 @@ public class Willow extends Application {
         // todo hmm I wonder how the listeners ever get removed...
         newBrowser.getView().getEngine().titleProperty().addListener((observableValue, oldTitle, newTitle) -> {
             if (newTitle != null && !"".equals(newTitle)) {
-                stage.setTitle("Willow - " + newTitle);
+                stage.setTitle(getString("browser.name") + " - " + newTitle);
             } else {
                 // necessary because when the browser is in the process of loading a new page, the title will be empty.  todo I wonder if the title would be reset correctly if the page has no title.
                 if (!newBrowser.getView().getEngine().getLoadWorker().isRunning()) {
-                    stage.setTitle("Willow");
+                    stage.setTitle(getString("browser.name") );
                 }
             }
         });

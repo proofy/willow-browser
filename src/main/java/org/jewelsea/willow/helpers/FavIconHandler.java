@@ -26,7 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import net.sf.image4j.codec.ico.ICODecoder;
 import org.jewelsea.willow.util.LruCache;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -122,7 +122,7 @@ public class FavIconHandler {
 
                 // if the decoding was successful convert to a JavaFX image and return it.
                 if (imgs.size() > 0) {
-                    return Util.bufferedImageToFXImage(imgs.get(0), 0, 16, true, true);
+                    return ResourceUtil.bufferedImageToFXImage(imgs.get(0), 0, 16, true, true);
                 } else {
                     return null;
                 }

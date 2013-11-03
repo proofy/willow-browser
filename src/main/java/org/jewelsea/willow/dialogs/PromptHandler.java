@@ -33,7 +33,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.util.ResourceUtil;
+
+import static org.jewelsea.willow.util.ResourceUtil.getString;
 
 public class PromptHandler extends VBox {
     public PromptHandler(
@@ -47,7 +49,7 @@ public class PromptHandler extends VBox {
         // add controls to the popup.
         final Label promptMessage = new Label(message);
         promptMessage.setWrapText(true);
-        final ImageView promptImage = new ImageView(Util.getImage("help_64.png"));
+        final ImageView promptImage = new ImageView(ResourceUtil.getImage("help_64.png"));
         promptImage.setFitHeight(32);
         promptImage.setPreserveRatio(true);
         promptMessage.setGraphic(promptImage);
@@ -58,9 +60,9 @@ public class PromptHandler extends VBox {
 
         // action button text setup.
         HBox buttonBar = new HBox(20);
-        final Button submitButton = new Button("Submit");
+        final Button submitButton = new Button(getString("dialog.submit"));
         submitButton.setDefaultButton(true);
-        final Button cancelButton = new Button("Cancel");
+        final Button cancelButton = new Button(getString("dialog.cancel"));
         cancelButton.setCancelButton(true);
         ColorAdjust bleach = new ColorAdjust();
         bleach.setSaturation(-0.6);
