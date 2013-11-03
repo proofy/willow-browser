@@ -27,14 +27,27 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-/** create controls to monitor webview loading. */
+/**
+ * A control to monitor worker progress.
+ *
+ * Used for showing progress of WebView loading.
+ */
 public class LoadingProgressDisplay extends ProgressBar {
 
+    /**
+     * Creates a UI display monitor for provided worker.
+     *
+     * Assumes the worker is reporting progress as work done on a scale from 0 to 100 (other values indicate indeterminate progress).
+     *
+     * @param worker the worker whose progress is to be monitored and displayed.
+     */
     public LoadingProgressDisplay(Worker worker) {
         setMaxWidth(Double.MAX_VALUE);
+
         ColorAdjust bleach = new ColorAdjust();
         bleach.setSaturation(-0.6);
         setEffect(bleach);
+
         HBox.setHgrow(this, Priority.ALWAYS);
 
         visibleProperty().bind(worker.runningProperty());

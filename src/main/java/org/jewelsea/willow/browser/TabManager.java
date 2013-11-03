@@ -125,6 +125,13 @@ public class TabManager {
         return newTabButton;
     }
 
+    /**
+     * Places a new tab under management.
+     * Selects the newly added tab so that it is visible.
+     * Updates the chrome's location field to reflect the newly managed and visible tab.
+     *
+     * @param tab the browser tab to be added to the chrome.
+     */
     void addTab(BrowserTab tab) {
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();

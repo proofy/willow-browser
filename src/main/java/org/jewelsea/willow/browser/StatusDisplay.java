@@ -34,10 +34,12 @@ public class StatusDisplay extends HBox {
         Text statusText = new Text();
         statusText.textProperty().bind(statusProperty);
         HBox.setMargin(statusText, new Insets(1, 6, 3, 6));
+
         setEffect(new DropShadow());
         getStyleClass().add("status-background");
         getChildren().add(statusText);
         setVisible(false);
+
         statusText.textProperty().addListener((observableValue, oldValue, newValue) ->
                 setVisible(newValue != null && !newValue.equals(""))
         );
