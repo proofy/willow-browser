@@ -43,9 +43,12 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.jewelsea.willow.browser.BrowserWindow;
+import org.jewelsea.willow.browser.LoadingProgressDisplay;
+import org.jewelsea.willow.browser.StatusDisplay;
 import org.jewelsea.willow.browser.TabManager;
 import org.jewelsea.willow.navigation.NavTools;
 import org.jewelsea.willow.sidebar.SideBar;
+import org.jewelsea.willow.util.DebugUtil;
 import org.jewelsea.willow.util.Util;
 
 import java.io.UnsupportedEncodingException;
@@ -178,13 +181,18 @@ public class Willow extends Application {
         sidebar.getScroll().setPrefViewportWidth(sidebar.getBarDisplay().getWidth());
 
         // debugging routine.
-//    System.getProperties().list(System.out);
-//    ScenicView.show(scene);
-//    Platform.runLater(new Runnable() {
-//      @Override public void run() {
-//        Util.dump(scene.getRoot());
-//      }
-//    });
+        //debug(scene);
+    }
+
+    private void debug(final Scene scene) {
+        System.getProperties().list(System.out);
+        //ScenicView.show(scene);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                DebugUtil.dump(scene.getRoot());
+            }
+        });
     }
 
     // creates a button to hide and show the navigation pane.
@@ -270,13 +278,17 @@ public class Willow extends Application {
 
         // monitor the status of the selected browser.
         overlayLayer.getChildren().clear();
-        final HBox statusDisplay = newBrowser.createStatusDisplay();
+        final HBox statusDisplay = new StatusDisplay(newBrowser.statusProperty());
         statusDisplay.translateXProperty().bind(getSidebarDisplay().widthProperty().add(20).add(getSidebarDisplay().translateXProperty()));
         statusDisplay.translateYProperty().bind(overlayLayer.heightProperty().subtract(50));
         overlayLayer.getChildren().add(statusDisplay);
 
         // monitor the loading progress of the selected browser.
-        sidebar.setLoadControl(newBrowser.createLoadControl());
+        sidebar.setLoadControl(
+            new LoadingProgressDisplay(
+                newBrowser.getView().getEngine().getLoadWorker()
+            )
+        );
 
         // make the chrome's location field respond to changes in the new browser's location.
         browserLocFieldChangeListener = (observableValue, oldLoc, newLoc) -> {

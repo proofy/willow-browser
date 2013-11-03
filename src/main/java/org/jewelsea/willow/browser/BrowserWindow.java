@@ -22,50 +22,35 @@
 package org.jewelsea.willow.browser;
 
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.FileChooser;
-import javafx.util.Callback;
+import org.jewelsea.willow.dialogs.DialogFactory;
 import org.jewelsea.willow.helpers.FavIconHandler;
-import org.jewelsea.willow.helpers.PDFViewer;
+import org.jewelsea.willow.helpers.LocationHandler;
 import org.jewelsea.willow.navigation.History;
 import org.jewelsea.willow.util.Util;
-
-import javax.swing.*;
-import java.io.*;
-import java.net.URL;
 
 public class BrowserWindow {
     private final WebView view = new WebView();
     private final History history = new History(this);
-    private final StringProperty status = new SimpleStringProperty();
+    private final ReadOnlyStringWrapper status = new ReadOnlyStringWrapper();
     private final TextField locField = new TextField();    // the location the browser engine is currently pointing at (or where the user can type in where to go next).
     private final ReadOnlyObjectWrapper<ImageView> favicon = new ReadOnlyObjectWrapper<>();
     private final FavIconHandler favIconHandler = FavIconHandler.getInstance();
+    private final DialogFactory dialogFactory = new DialogFactory(view);
 
     public BrowserWindow() {
         // init the location text field.
@@ -97,82 +82,31 @@ public class BrowserWindow {
         engine.locationProperty().addListener((observableValue3, oldLoc1, newLoc) -> {
             getHistory().executeNav(newLoc); // update the history lists.
             getLocField().setText(newLoc);   // update the location field.
-            favicon.set(copyImageView(favIconHandler.fetchFavIcon(newLoc)));
+            favicon.set(Util.copyImageView(favIconHandler.fetchFavIcon(newLoc)));
         });
 
         // monitor the web views loading state so we can provide progress feedback.
         Worker worker = engine.getLoadWorker();
-        worker.stateProperty().addListener((observableValue2, oldState, newState) -> {
-            if (newState == Worker.State.CANCELLED) {
-                // todo possible hook here for implementing a download handler.
-            }
+        worker.stateProperty().addListener((observableValue, oldState, newState) -> {
+            // todo we actually don't have anything interesting to do at the moment.
         });
-        worker.exceptionProperty().addListener((observableValue1, oldThrowable, newThrowable) ->
+
+        worker.exceptionProperty().addListener((observableValue, oldThrowable, newThrowable) ->
                 System.out.println("Browser encountered a load exception: " + newThrowable)
         );
 
         // create handlers for javascript actions and status changes.
-        engine.setPromptHandler(createPromptHandler());
-        engine.setConfirmHandler(createConfirmHandler());
-        engine.setOnAlert(createAlertHandler());
-        engine.setOnStatusChanged(stringWebEvent -> getStatus().setValue(stringWebEvent.getData()));
+        engine.setPromptHandler(dialogFactory.createPromptHandler());
+        engine.setConfirmHandler(dialogFactory.createConfirmHandler());
+        engine.setOnAlert(dialogFactory.createAlertHandler());
+        engine.setOnStatusChanged(stringWebEvent ->
+                status.setValue(stringWebEvent.getData())
+        );
 
         // monitor the location url, and if it is a pdf file, then create a pdf viewer for it.
-        getLocField().textProperty().addListener((observableValue, oldLoc, newLoc) -> {
-            if (newLoc.endsWith(".pdf")) {
-                SwingUtilities.invokeLater(() -> {
-                    try {
-                        final PDFViewer pdfViewer = new PDFViewer(false);  // todo try icepdf viewer instead...
-                        pdfViewer.openFile(new URL(newLoc));
-                    } catch (Exception ex) {
-                        // just fail to open a bad pdf url silently - no action required.
-                    }
-                });
-            }
-            String downloadableExtension = null;  // todo I wonder how to find out from WebView which documents it could not process so that I could trigger a save as for them?
-            String[] downloadableExtensions = {".doc", ".xls", ".zip", ".tgz", ".jar"};
-            for (String ext : downloadableExtensions) {
-                if (newLoc.endsWith(ext)) {
-                    downloadableExtension = ext;
-                    break;
-                }
-            }
-            if (downloadableExtension != null) {
-                // create a file save option for performing a download.
-                FileChooser chooser = new FileChooser();
-                chooser.setTitle("Save " + newLoc);
-                chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Downloadable File", downloadableExtension));
-                int filenameIdx = newLoc.lastIndexOf("/") + 1;
-                if (filenameIdx != 0) {
-                    File saveFile = chooser.showSaveDialog(view.getScene().getWindow());
-
-                    if (saveFile != null) {
-                        BufferedInputStream is = null;
-                        BufferedOutputStream os = null;
-                        try {
-                            is = new BufferedInputStream(new URL(newLoc).openStream());
-                            os = new BufferedOutputStream(new FileOutputStream(saveFile));
-                            int b = is.read();
-                            while (b != -1) {
-                                os.write(b);
-                                b = is.read();
-                            }
-                        } catch (IOException e) {
-                            System.out.println("Unable to save file: " + e);
-                        } finally {
-                            try {
-                                if (is != null) is.close();
-                            } catch (IOException e) { /** no action required. */}
-                            try {
-                                if (os != null) os.close();
-                            } catch (IOException e) { /** no action required. */}
-                        }
-                    }
-
-                    // todo provide feedback on the save function and provide a download list and download list lookup.
-                }
-            }
-        });
+        getLocField().textProperty().addListener((observableValue, oldLoc, newLoc) ->
+                LocationHandler.handleLocation(view, newLoc)
+        );
 
         // add an effect for disabling and enabling the view.
         getView().disabledProperty().addListener(new ChangeListener<Boolean>() {
@@ -192,172 +126,6 @@ public class BrowserWindow {
                 }
             }
         });
-    }
-
-    /**
-     * Copies an ImageView to a new ImageView, so that we can render multiple copies of the templated
-     * ImageView in a scene.
-     *
-     * @param templateImageView an imageview containing an image and other import information to be copied.
-     * @return a copy of the import parts of an ImageView
-     */
-    private ImageView copyImageView(ImageView templateImageView) {
-        ImageView xerox = new ImageView();
-        xerox.setFitHeight(templateImageView.getFitHeight());
-        xerox.setPreserveRatio(templateImageView.isPreserveRatio());
-        xerox.imageProperty().bind(templateImageView.imageProperty());
-        return xerox;
-    }
-
-    private EventHandler<WebEvent<String>> createAlertHandler() {
-        return stringWebEvent -> {
-            // add controls to the popup.
-            final Label promptMessage = new Label(stringWebEvent.getData());
-            final ImageView alertImage = new ImageView(Util.getImage("alert_48.png"));
-            alertImage.setFitHeight(32);
-            alertImage.setPreserveRatio(true);
-            promptMessage.setGraphic(alertImage);
-            promptMessage.setWrapText(true);
-            promptMessage.setPrefWidth(350);
-
-            // action button text setup.
-            HBox buttonBar = new HBox(20);
-            final Button confirmButton = new Button("Continue");
-            confirmButton.setDefaultButton(true);
-
-            buttonBar.getChildren().addAll(confirmButton);
-
-            // layout the popup.
-            final VBox promptLayout = new VBox(14);
-            promptLayout.setPadding(new Insets(10));
-            promptLayout.getStyleClass().add("alert-dialog");
-            promptLayout.getChildren().addAll(promptMessage, buttonBar);
-
-            final DropShadow dropShadow = new DropShadow();
-            promptLayout.setEffect(dropShadow);
-            overlayView(promptLayout);
-
-            // confirm and close the popup.
-            confirmButton.setOnAction(actionEvent -> {
-                // todo block until the user accepts the alert.
-                getView().setDisable(false);
-                removeViewOverlay();
-            });
-        };
-    }
-
-    private Callback<String, Boolean> createConfirmHandler() {
-        return message -> {
-            // add controls to the popup.
-            final Label promptMessage = new Label(message);
-            promptMessage.setWrapText(true);
-            promptMessage.setPrefWidth(350);
-
-            // action button text setup.
-            HBox buttonBar = new HBox(20);
-
-            final ImageView confirmImage = new ImageView(Util.getImage("select_48.png"));
-            confirmImage.setFitHeight(19);
-            confirmImage.setPreserveRatio(true);
-
-            final Button confirmButton = new Button("Confirm");
-            confirmButton.setGraphic(confirmImage);
-            confirmButton.setDefaultButton(true);
-
-            final ImageView denyImage = new ImageView(Util.getImage("stop_48.png"));
-            denyImage.setFitHeight(19);
-            denyImage.setPreserveRatio(true);
-
-            final Button denyButton = new Button("Deny");
-            denyButton.setGraphic(denyImage);
-            denyButton.setCancelButton(true);
-
-            buttonBar.getChildren().addAll(confirmButton, denyButton);
-
-            // layout the popup.
-            final VBox promptLayout = new VBox(14);
-            promptLayout.setPadding(new Insets(10));
-            promptLayout.getStyleClass().add("alert-dialog");
-            promptLayout.getChildren().addAll(promptMessage, buttonBar);
-
-            final DropShadow dropShadow = new DropShadow();
-            promptLayout.setEffect(dropShadow);
-            overlayView(promptLayout);
-
-            // confirm and close the popup.
-            confirmButton.setOnAction(actionEvent -> {
-                // todo actually modify the output of the prompt callback when the platform permits this to be possible.
-                getView().setDisable(false);
-                removeViewOverlay();
-            });
-
-            // deny and close the popup.
-            denyButton.setOnAction(actionEvent -> {
-                // todo actually modify the output of the prompt callback when the platform permits this to be possible.
-                getView().setDisable(false);
-                removeViewOverlay();
-            });
-
-            return true; // todo should block and return the actual value from the dialog.
-        };
-    }
-
-    private Callback<PromptData, String> createPromptHandler() {
-        return promptData -> {
-            // add controls to the popup.
-            final Label promptMessage = new Label(promptData.getMessage());
-            promptMessage.setWrapText(true);
-            final ImageView promptImage = new ImageView(Util.getImage("help_64.png"));
-            promptImage.setFitHeight(32);
-            promptImage.setPreserveRatio(true);
-            promptMessage.setGraphic(promptImage);
-            promptMessage.setPrefWidth(350);
-            final TextField inputField = new TextField(promptData.getDefaultValue());
-            inputField.setTranslateY(-5);
-            Platform.runLater(inputField::selectAll);
-
-            // action button text setup.
-            HBox buttonBar = new HBox(20);
-            final Button submitButton = new Button("Submit");
-            submitButton.setDefaultButton(true);
-            final Button cancelButton = new Button("Cancel");
-            cancelButton.setCancelButton(true);
-            ColorAdjust bleach = new ColorAdjust();
-            bleach.setSaturation(-0.6);
-            cancelButton.setEffect(bleach);
-            buttonBar.getChildren().addAll(submitButton, cancelButton);
-
-            // layout the popup.
-            final VBox promptLayout = new VBox(14);
-            promptLayout.setPadding(new Insets(10));
-            promptLayout.getStyleClass().add("alert-dialog");
-            promptLayout.getChildren().addAll(promptMessage, inputField, buttonBar);
-
-            final DropShadow dropShadow = new DropShadow();
-            promptLayout.setEffect(dropShadow);
-            overlayView(promptLayout);
-
-            // submit and close the popup.
-            submitButton.setOnAction(actionEvent -> {
-                // todo actually modify the output of the prompt callback when the platform permits this to be possible.
-                getView().setDisable(false);
-                removeViewOverlay();
-            });
-
-            // submit and close the popup.
-            cancelButton.setOnAction(actionEvent -> {
-                // todo actually modify the output of the prompt callback when the platform permits this to be possible.
-                getView().setDisable(false);
-                removeViewOverlay();
-            });
-
-            return promptData.getDefaultValue();
-        };
-    }
-
-    private void removeViewOverlay() {
-        BorderPane viewParent = (BorderPane) getView().getParent().getParent();
-        viewParent.setCenter(getView());
     }
 
     public void navTo(String loc) {
@@ -399,67 +167,15 @@ public class BrowserWindow {
         // webview will grab the focus if automatically if it has an html input control to display, but we want it
         // to always grab the focus and kill the focus which was on the input bar, so just set ask the platform to focus
         // the web view later (we do it later, because if we did it now, the default focus handling might kick in and override our request).
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                getView().requestFocus();
-            }
-        });
-    }
-
-    // create controls to monitor webview loading.
-    public ProgressBar createLoadControl() {
-        final Worker<Void> loadWorker = getView().getEngine().getLoadWorker();
-        final ProgressBar progressBar = new ProgressBar();
-        progressBar.setMaxWidth(Double.MAX_VALUE);
-        ColorAdjust bleach = new ColorAdjust();
-        bleach.setSaturation(-0.6);
-        progressBar.setEffect(bleach);
-        HBox.setHgrow(progressBar, Priority.ALWAYS);
-
-        progressBar.visibleProperty().bind(loadWorker.runningProperty());
-
-        // as the webview load progresses update progress.
-        loadWorker.workDoneProperty().addListener((observableValue, oldNumber, newNumber) -> {
-            if (newNumber == null) newNumber = -1.0;
-            final double newValue = newNumber.doubleValue();
-            if (newValue < 0.0 || newValue > 100.0) {
-                progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-            }
-            progressBar.setProgress(newValue / 100.0);
-        });
-
-        return progressBar;
-    }
-
-    /**
-     * @return a display to monitor status messages from the webview.
-     */
-    public HBox createStatusDisplay() {
-        final HBox statusDisplay = new HBox();
-        Text statusText = new Text();
-        statusText.textProperty().bind(getStatus());
-        HBox.setMargin(statusText, new Insets(1, 6, 3, 6));
-        statusDisplay.setEffect(new DropShadow());
-        statusDisplay.getStyleClass().add("status-background");
-        statusDisplay.getChildren().add(statusText);
-        statusDisplay.setVisible(false);
-        statusText.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            statusDisplay.setVisible(newValue != null && !newValue.equals(""));
-        });
-        return statusDisplay;
+        Platform.runLater(() -> getView().requestFocus());
     }
 
     public TextField getLocField() {
         return locField;
     }
 
-    public StringProperty getStatus() {
-        return status;
-    }
-
-    public ImageView getFavicon() {
-        return favicon.get();
+    public ReadOnlyStringProperty statusProperty() {
+        return status.getReadOnlyProperty();
     }
 
     public ReadOnlyObjectProperty<ImageView> faviconProperty() {
@@ -472,27 +188,6 @@ public class BrowserWindow {
 
     public WebView getView() {
         return view;
-    }
-
-    /**
-     * Overlay a dialog on top of the webview.
-     *
-     * @param dialogNode the dialog to overlay on top of the view.
-     */
-    private void overlayView(Node dialogNode) {
-        // if the view is already overlaid we will just ignore this overlay call silently . . . todo probably not the best thing to do, but ok for now.
-        if (!(getView().getParent() instanceof BorderPane)) return;
-
-        // record the view's parent.
-        BorderPane viewParent = (BorderPane) getView().getParent();
-
-        // create an overlayPane layering the popup on top of the webview
-        StackPane overlayPane = new StackPane();
-        overlayPane.getChildren().addAll(getView(), new Group(dialogNode));
-        getView().setDisable(true);
-
-        // overlay the popup on the webview.
-        viewParent.setCenter(overlayPane);
     }
 }
 

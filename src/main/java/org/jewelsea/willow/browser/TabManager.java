@@ -31,32 +31,32 @@ import javafx.scene.image.ImageView;
 import org.jewelsea.willow.util.Util;
 
 /**
- * Manages a set of active browser windows
+ * Manages a set of active browser windows.
  */
 public class TabManager {
 
     public static final double TAB_PANE_WIDTH = 400;
+
     /**
      * representation of the current browser.
      */
     final private ReadOnlyObjectWrapper<BrowserWindow> browser = new ReadOnlyObjectWrapper<>();
+
     /**
      * browser tabs.
      */
     final private TabPane tabPane = new TabPane();
+
     /**
      * button to open a new tab
      */
     final private Button newTabButton = new Button();
+
     /**
      * a location field in the chrome representing the location of the current tab
      * (can be null if the location is not represented in the chrome but only in the browser in the tab itself).
      */
     final private TextField chromeLocField;
-
-    public TabManager() {
-        this(null);
-    }
 
     public TabManager(TextField locField) {
         this.chromeLocField = locField;
@@ -71,7 +71,10 @@ public class TabManager {
             for (int i = 1; i < tabs.size(); i++) {
                 tabs.get(i).setClosable(true);
             }
-            tabPane.setTabMaxWidth(Math.max(50, TAB_PANE_WIDTH / Math.max(1, tabPane.getTabs().size() * 0.7)));  // todo work out a good max width // todo file jira setting max width on a initialTab pane is buggy as the close symbol is not usable if you change initialTab from closable to not closable. // todo file jira on initialTab pane set policy for closing icon display.
+            // todo work out a good max width
+            // todo file jira setting max width on a initialTab pane is buggy as the close symbol is not usable if you change initialTab from closable to not closable.
+            // todo file jira on initialTab pane set policy for closing icon display.
+            tabPane.setTabMaxWidth(Math.max(50, TAB_PANE_WIDTH / Math.max(1, tabPane.getTabs().size() * 0.7)));
         });
 
         // monitor the selected tab in the tab pane so that we can set the TabManager's browser property appropriately.

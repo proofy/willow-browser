@@ -25,8 +25,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
@@ -44,25 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class Util {
-    // create a button with an icon
-    static public Button createIconButton(String buttonText, String imageLoc, String tooltipText, EventHandler<ActionEvent> actionEventHandler) {
-        final Button button = new Button(buttonText);
-        button.setTooltip(new Tooltip(tooltipText));
-        button.getStyleClass().add("icon-button");
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setAlignment(Pos.CENTER_LEFT);
-        final ImageView imageView = new ImageView(getImage(imageLoc));
-        imageView.setFitHeight(16);
-        imageView.setPreserveRatio(true);
-        button.setGraphic(imageView);
-        button.setContentDisplay(ContentDisplay.LEFT);
-        VBox.setMargin(button, new Insets(0, 5, 0, 5));
-        button.setOnAction(actionEventHandler);
-
-        return button;
-    }
-
-    // turn an awt image into a JavaFX image.
+    /** turn an awt image into a JavaFX image. */
     public static javafx.scene.image.Image bufferedImageToFXImage(java.awt.Image image, double width, double height, boolean resize, boolean smooth) throws IOException {
         if (!(image instanceof RenderedImage)) {
             BufferedImage bufferedImage =
@@ -93,25 +73,18 @@ public class Util {
         return new Image(Util.getResource("images/" + imageFilename));
     }
 
-    // debugging routine to dump the scene graph.
-    public static void dump(Node n) {
-        dump(n, 0);
+    /**
+     * Copies an ImageView to a new ImageView, so that we can render multiple copies of the templated
+     * ImageView in a scene.
+     *
+     * @param templateImageView an imageview containing an image and other import information to be copied.
+     * @return a copy of the import parts of an ImageView
+     */
+    public static ImageView copyImageView(ImageView templateImageView) {
+        ImageView xerox = new ImageView();
+        xerox.setFitHeight(templateImageView.getFitHeight());
+        xerox.setPreserveRatio(templateImageView.isPreserveRatio());
+        xerox.imageProperty().bind(templateImageView.imageProperty());
+        return xerox;
     }
-
-    private static void dump(Node n, int depth) {
-        for (int i = 0; i < depth; i++) System.out.print("  ");
-        System.out.println(n);
-        if (n instanceof Parent) for (Node c : ((Parent) n).getChildrenUnmodifiable()) dump(c, depth + 1);
-    }
-
-    // debugging routine to highlight the borders of nodes.
-    public static void highlight(Node n) {
-        highlight(n, 0);
-    }
-
-    private static void highlight(Node n, int depth) {
-        n.setStyle("-fx-stroke: red; -fx-stroke-width: 1; -fx-stroke-type: inside;");
-        if (n instanceof Parent) for (Node c : ((Parent) n).getChildrenUnmodifiable()) highlight(c, depth + 1);
-    }
-
 }

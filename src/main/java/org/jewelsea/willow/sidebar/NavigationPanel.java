@@ -32,6 +32,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
 import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.widgets.IconButton;
 
 /**
  * Sidebar panel for showing demos
@@ -49,7 +50,7 @@ public class NavigationPanel extends TitledPane {
 
     public NavigationPanel(final Willow chrome) {
         // create a home button to navigate home.
-        final Button homeButton = Util.createIconButton(
+        final Button homeButton = new IconButton(
                 "Home",
                 "Fairytale_folder_home.png",
                 "Click to go home or drag the location here to change house",
@@ -74,7 +75,7 @@ public class NavigationPanel extends TitledPane {
         });
 
         // create a history button to show the history.
-        final Button historyButton = Util.createIconButton(
+        final Button historyButton = new IconButton(
                 "History",
                 "History.png",
                 "Where did you go?",
@@ -86,7 +87,7 @@ public class NavigationPanel extends TitledPane {
 
         // create a bookmarksButton.
         final ContextMenu bookmarksMenu = new ContextMenu();
-        final Button bookmarksButton = Util.createIconButton(
+        final Button bookmarksButton = new IconButton(
                 "Bookmarks",
                 "1714696718.png",
                 "Drag a location here to remember it and click to recall your remembrance",
@@ -138,7 +139,7 @@ public class NavigationPanel extends TitledPane {
         HBox.setMargin(fontSizeIcon, new Insets(0, 0, 0, 8));
 
         // create a reader button.
-        final Button readerButton = Util.createIconButton(
+        final Button readerButton = new IconButton(
                 "Read",
                 "readability.png",
                 "Make the current page easier to read",

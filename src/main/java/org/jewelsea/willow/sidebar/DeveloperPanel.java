@@ -21,13 +21,11 @@
 
 package org.jewelsea.willow.sidebar;
 
-import javafx.geometry.Side;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.widgets.IconButton;
 
 /**
  * Sidebar panel for development tools
@@ -35,7 +33,7 @@ import org.jewelsea.willow.util.Util;
 public class DeveloperPanel extends TitledPane {
     public DeveloperPanel(final Willow chrome) {
         // create a firebug button.
-        final Button firebugButton = Util.createIconButton(
+        final Button firebugButton = new IconButton(
                 "Firebug",
                 "firebug.png",
                 "Discover your web page",
