@@ -36,7 +36,7 @@ import javafx.scene.input.MouseEvent;
 import org.jewelsea.willow.browser.BrowserWindow;
 
 /**
- * manages history for a browser tab.
+ * Manages history for a browser tab.
  */
 public class History {
     private static final int MAX_HISTORY_SIZE = 100; // max number of locations we will store in the history.
@@ -198,7 +198,11 @@ public class History {
      */
     private MenuItem createMenuItem(final String loc, final int navPointer) {
         final MenuItem nextMenuItem = new MenuItem(loc);
-        nextMenuItem.setOnAction(actionEvent -> browser.navTo(requestNav(navPointer)));
+
+        nextMenuItem.setOnAction(
+                actionEvent -> browser.navTo(requestNav(navPointer))
+        );
+
         return nextMenuItem;
     }
 }

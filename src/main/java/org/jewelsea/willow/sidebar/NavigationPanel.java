@@ -31,6 +31,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
+import org.jewelsea.willow.navigation.BookmarkHandler;
 import org.jewelsea.willow.util.Util;
 import org.jewelsea.willow.widgets.IconButton;
 
@@ -40,12 +41,13 @@ import org.jewelsea.willow.widgets.IconButton;
 public class NavigationPanel extends TitledPane {
     final ContextMenu canvasMenu = new ContextMenu();
 
-    static final String[] defaultBookmarks = {
-            "http://fxexperience.com/",
-            "http://jewelsea.wordpress.com/",
-            "http://docs.oracle.com/javafx/",
-            "http://docs.oracle.com/javafx/2/api/index.html",
-            "https://forums.oracle.com/forums/forum.jspa?forumID=1385&start=0"
+    static final String[][] defaultBookmarks = {
+            { "FX Experience",    "http://fxexperience.com/" },
+            { "Jewelsea",         "http://jewelsea.wordpress.com/" },
+            { "JavaFX Tutorials", "http://docs.oracle.com/javafx/" },
+            { "JavaFX Javadoc",   "http://docs.oracle.com/javafx/2/api/index.html" },
+            { "JavaFX Forums",    "https://forums.oracle.com/forums/forum.jspa?forumID=1385&start=0" },
+            { "JavaFX StackOverflow", "http://stackoverflow.com/questions/tagged/javafx+javafx-2" }
     };
 
     public NavigationPanel(final Willow chrome) {
@@ -109,8 +111,9 @@ public class NavigationPanel extends TitledPane {
             if (db.hasString()) {
                 // add the dragged url to the bookmarks menu (if it wasn't already there).
                 final String bookmarkUrl = db.getString();
-                if (SideBar.createBookmark(chrome, bookmarksMenu, bookmarkUrl)) return;
-                success = true;
+                if (BookmarkHandler.installBookmark(chrome, bookmarksMenu, bookmarkUrl, bookmarkUrl)) {
+                    success = true;
+                }
             }
             dragEvent.setDropCompleted(success);
             dragEvent.consume();
@@ -159,8 +162,8 @@ public class NavigationPanel extends TitledPane {
         navPanel.getStyleClass().add("sidebar-panel");
 
         // create an initial set of bookmarks.
-        for (String url : defaultBookmarks) {
-            SideBar.createBookmark(chrome, bookmarksMenu, url);
+        for (String[] bookmark : defaultBookmarks) {
+            BookmarkHandler.installBookmark(chrome, bookmarksMenu, bookmark[0], bookmark[1]);
         }
 
         setText("Navigation");

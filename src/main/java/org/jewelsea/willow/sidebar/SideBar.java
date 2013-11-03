@@ -33,6 +33,7 @@ public class SideBar {
     private final ScrollPane sideBarScroll;
     private final VBox bar;
     private final VBox progressHolder;
+
     /**
      * Create a private contructor so you can only create a sidebar via factory methods
      */
@@ -82,24 +83,6 @@ public class SideBar {
         );
 
         return new SideBar(bar, spacer);
-    }
-
-    /**
-     * Creates a bookmarked url to navigate to.
-     *
-     * @param chrome        the browser the bookmark is to control.
-     * @param bookmarksMenu the menu into which the bookmark is to be installed.
-     * @param bookmarkUrl   the url of the bookmark.  // todo should also include the title.
-     * @return true if the bookmark was installed in the chrome.
-     */
-    static boolean createBookmark(final Willow chrome, ContextMenu bookmarksMenu, final String bookmarkUrl) {
-        for (MenuItem item : bookmarksMenu.getItems()) {
-            if (item.getText().equals(bookmarkUrl)) return false;
-        }
-        final MenuItem menuItem = new MenuItem(bookmarkUrl);
-        menuItem.setOnAction(actionEvent -> chrome.getBrowser().navTo(bookmarkUrl));
-        bookmarksMenu.getItems().add(menuItem);
-        return true;
     }
 
     /**

@@ -27,7 +27,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import org.jewelsea.willow.Willow;
-import org.jewelsea.willow.util.Util;
+import org.jewelsea.willow.navigation.BookmarkHandler;
 import org.jewelsea.willow.widgets.IconButton;
 
 /**
@@ -36,15 +36,12 @@ import org.jewelsea.willow.widgets.IconButton;
 public class DemoPanel extends TitledPane {
     final ContextMenu canvasMenu = new ContextMenu();
 
-    static final String[] canvasBookmarks = {
-            "http://www.zynaps.com/site/experiments/environment.html?mesh=bart.wft",
-            "http://andrew-hoyer.com/experiments/cloth/",
-            "http://hakim.se/experiments/html5/sketch/#35313167",
-            "http://www.effectgames.com/demos/canvascycle/"
-//    "http://www.kevs3d.co.uk/dev/lsystems/",        rendering of half the fractals here fails, so displayed it.
-//    "http://www.openrise.com/lab/FlowerPower/",     flower power appears to have stopped working in later webview builds, so disabled it.
-//    "http://mugtug.com/sketchpad/",                 sketchpad doesn't work too well, so disabled it.
-//    "http://radikalfx.com/files/collage/demo.html"  collage is pretty boring, so disabled it.
+    static final String[][] canvasBookmarks = {
+            { "3D Bart Simpson", "http://www.zynaps.com/site/experiments/environment.html?mesh=bart.wft" },
+            { "Cloth Simulation", "http://andrew-hoyer.com/experiments/cloth/" },
+            { "Canvas Cycle", "http://www.effectgames.com/demos/canvascycle/" },
+            { "Fractal Graphics", "http://www.kevs3d.co.uk/dev/lsystems/" }
+//    "http://mugtug.com/sketchpad/",                 sketchpad gives ES2 Vram Pool errors, so disabled it.
     };
 
     public DemoPanel(final Willow chrome) {
@@ -58,8 +55,8 @@ public class DemoPanel extends TitledPane {
         canvasButton.setOnAction(actionEvent ->
                 canvasMenu.show(canvasButton, Side.BOTTOM, 0, 0)
         );
-        for (String url : canvasBookmarks) {
-            SideBar.createBookmark(chrome, canvasMenu, url);
+        for (String[] bookmark : canvasBookmarks) {
+            BookmarkHandler.installBookmark(chrome, canvasMenu, bookmark[0], bookmark[1]);
         }
 
         // create a box for demos.
