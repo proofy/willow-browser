@@ -1,12 +1,15 @@
-Willow - A web browser.
+Willow - A javafx based web browser.
+using WebKit
 
-Author: John Smith
-send2jsmith@gmail.com
+Authorio who starts this project: John Smith
+mailto:send2jsmith@gmail.com
 
 
 Build Pre-requisites
 --------------------
-JDK 1.8b113+
+* JDK 1.8b113+
+* JAVA_HOME
+* maven
 
 
 Build Instructions - Maven
@@ -15,7 +18,7 @@ run a maven build on the project root directory (contains a pom.xml file).
 > mvn package
 
 run the browser
-> %JDK_HOME%\bin\java -jar target\willow-0.2-jar-with-dependencies.jar
+> java -jar target\willow-0.2-jar-with-dependencies.jar
 
 
 Build Instructions - Windows Command Line
