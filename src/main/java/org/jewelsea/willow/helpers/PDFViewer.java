@@ -142,9 +142,6 @@ public class PDFViewer extends JFrame
             url = getClass().getResource(name);
 
             icon = new ImageIcon(url);
-            if (icon == null) {
-                System.out.println("Couldn't find " + url);
-            }
         } catch (Exception e) {
             System.out.println("Couldn't find " + getClass().getName() + "/" + name);
             e.printStackTrace();
@@ -617,6 +614,8 @@ public class PDFViewer extends JFrame
         ByteBuffer buf =
                 channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         openPDFByteBuffer(buf, file.getPath(), file.getName());
+        channel.close();
+        raf.close();
     }
 
     /**

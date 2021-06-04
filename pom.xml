@@ -28,16 +28,22 @@
   <properties>
     <exec.mainClass>org.jewelsea.willow.Willow</exec.mainClass>
     <pdfrenderer.jar>${project.basedir}/lib/PDFRenderer-0.9.1.jar</pdfrenderer.jar>
-    <javafx.min.version>2.2</javafx.min.version>
     <jdk.home>${env.JAVA_HOME}</jdk.home>
-    <javafx.runtime.lib.jar>${jdk.home}/jre/lib/ext/jfxrt.jar</javafx.runtime.lib.jar>
-    <javafx.tools.ant.jar>${jdk.home}/lib/ant-javafx.jar</javafx.tools.ant.jar>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <javafx.version>16</javafx.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
+<!-- https://mvnrepository.com/artifact/org.swinglabs/pdf-renderer -->
+<dependency>
+    <groupId>org.swinglabs</groupId>
+    <artifactId>pdf-renderer</artifactId>
+    <version>1.0.5</version>
+</dependency>
+  
+<!--   
     <dependency>
       <groupId>org.swinglabs</groupId>
       <artifactId>pdf-renderer</artifactId>
@@ -45,22 +51,35 @@
       <scope>system</scope>
       <systemPath>${pdfrenderer.jar}</systemPath>
     </dependency>
+     -->
     <dependency>
       <groupId>org.jclarion</groupId>
       <artifactId>image4j</artifactId>
       <version>0.7</version>
     </dependency>
-    <dependency>
-      <groupId>javafx</groupId>
-      <artifactId>jfxrt</artifactId>
-      <version>${javafx.min.version}</version>
-      <scope>system</scope>
-      <systemPath>${javafx.runtime.lib.jar}</systemPath>
-    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-base</artifactId>
+	    <version>${javafx.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-controls</artifactId>
+	    <version>${javafx.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-web -->
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-web</artifactId>
+	    <version>${javafx.version}</version>
+	</dependency>
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.10</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -86,39 +105,16 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.6</version>
-        <executions>
-          <execution>
-            <id>create-launcher-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target xmlns:fx="javafx:com.sun.javafx.tools.ant">
-                <taskdef
-                    uri="javafx:com.sun.javafx.tools.ant"
-                    resource="com/sun/javafx/tools/ant/antlib.xml"
-                    classpath="${javafx.tools.ant.jar}"/>
-                <fx:application id="fxApp"
-                                name="${project.name}"
-                                mainClass="${exec.mainClass}"/>
-                <fx:jar destfile="${project.build.directory}/${project.build.finalName}-launcher">
-                  <fx:application refid="fxApp"/>
-                  <fx:fileset dir="${project.build.directory}/classes"/>
-                </fx:jar>
-                <attachartifact
-                    file="${project.build.directory}/${project.build.finalName}-launcher.jar"
-                    classifier="launcher"/>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-maven-plugin</artifactId>
+    <version>0.0.6</version>
+    <configuration>
+        <mainClass>${exec.mainClass}</mainClass>
+    </configuration>
+</plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2.1</version>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -129,15 +125,13 @@
           </execution>
         </executions>
         <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/jar-with-dependencies.xml</descriptor>
-          </descriptors>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
           <archive>
-            <manifestEntries>
-              <JavaFX-Version>${javafx.min.version}</JavaFX-Version>
-              <JavaFX-Application-Class>${exec.mainClass}</JavaFX-Application-Class>
-              <Main-Class>com/javafx/main/Main</Main-Class>
-            </manifestEntries>
+          	<manifest>
+          		<mainClass>${exec.mainClass}</mainClass>
+          	</manifest>
           </archive>
         </configuration>
       </plugin>
